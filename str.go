@@ -41,6 +41,22 @@ func (s Str) RemoveQuotations() string {
 	return s.V()
 }
 
+// RemovePrefix :
+func (s Str) RemovePrefix(prefix string) string {
+	if strings.HasPrefix(s.V(), prefix) {
+		return s.V()[len(prefix):len(s.V())]
+	}
+	return s.V()
+}
+
+// RemoveSuffix :
+func (s Str) RemoveSuffix(suffix string) string {
+	if strings.HasSuffix(s.V(), suffix) {
+		return s.V()[:len(s.V())-len(suffix)]
+	}
+	return s.V()
+}
+
 // AllAreIdentical : check all the input strings are identical
 func AllAreIdentical(arr ...string) bool {
 	if len(arr) > 1 {
