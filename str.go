@@ -41,8 +41,8 @@ func (s Str) RemoveQuotations() string {
 	return s.V()
 }
 
-// AddPrefix :
-func (s Str) AddPrefix(prefix string) string {
+// MakePrefix :
+func (s Str) MakePrefix(prefix string) string {
 	if !strings.HasPrefix(s.V(), prefix) {
 		return prefix + s.V()
 	}
@@ -57,8 +57,8 @@ func (s Str) RemovePrefix(prefix string) string {
 	return s.V()
 }
 
-// AddSuffix :
-func (s Str) AddSuffix(suffix string) string {
+// MakeSuffix :
+func (s Str) MakeSuffix(suffix string) string {
 	if !strings.HasSuffix(s.V(), suffix) {
 		return s.V() + suffix
 	}
