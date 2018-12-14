@@ -73,6 +73,14 @@ func (s Str) RemoveSuffix(suffix string) string {
 	return s.V()
 }
 
+// RemoveTailFromLast :
+func (s Str) RemoveTailFromLast(tail string) string {
+	if i := strings.LastIndex(s.V(), tail); i >= 0 {
+		return s.V()[:i]
+	}
+	return s.V()
+}
+
 // AllAreIdentical : check all the input strings are identical
 func AllAreIdentical(arr ...string) bool {
 	if len(arr) > 1 {
