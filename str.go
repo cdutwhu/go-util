@@ -81,6 +81,20 @@ func (s Str) RemoveTailFromLast(tail string) string {
 	return s.V()
 }
 
+// KeyValueMap :
+func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
+	r = make(map[string]string)
+	if pt := strings.Index(s.V(), string(terminator)); pt > 0 {
+		for _, kv := range strings.FieldsFunc(s.V()[:pt], func(c rune) bool { return c == delimiter }) {
+			if strings.Contains(kv, string(assign)) {
+				kvpair := strings.Split(kv, string(assign))
+				r[kvpair[0]] = Str(kvpair[1]).RemoveQuotations()
+			}
+		}
+	}
+	return
+}
+
 // AllAreIdentical : check all the input strings are identical
 func AllAreIdentical(arr ...string) bool {
 	if len(arr) > 1 {

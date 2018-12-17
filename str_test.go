@@ -18,3 +18,7 @@ func TestRemoveSuffix(t *testing.T) {
 func TestRemoveTailFromLast(t *testing.T) {
 	pln(Str("a.sif.abc").RemoveTailFromLast("."))
 }
+
+func TestKeyValueMap(t *testing.T) {
+	pln(Str(`<abc a="dd"  c=fff>`).KeyValueMap(' ', '=', '>'))
+}
