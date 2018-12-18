@@ -84,12 +84,14 @@ func (s Str) RemoveTailFromLast(tail string) string {
 // KeyValueMap :
 func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
 	r = make(map[string]string)
-	if pt := strings.Index(s.V(), string(terminator)); pt > 0 {
-		for _, kv := range strings.FieldsFunc(s.V()[:pt], func(c rune) bool { return c == delimiter }) {
-			if strings.Contains(kv, string(assign)) {
-				kvpair := strings.Split(kv, string(assign))
-				r[kvpair[0]] = Str(kvpair[1]).RemoveQuotations()
-			}
+	str := s.V()
+	if pt := strings.Index(str, string(terminator)); pt > 0 {
+		str = str[:pt]
+	}
+	for _, kv := range strings.FieldsFunc(str, func(c rune) bool { return c == delimiter }) {
+		if strings.Contains(kv, string(assign)) {
+			kvpair := strings.Split(kv, string(assign))
+			r[kvpair[0]] = Str(kvpair[1]).RemoveQuotations()
 		}
 	}
 	return

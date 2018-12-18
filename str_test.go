@@ -20,5 +20,6 @@ func TestRemoveTailFromLast(t *testing.T) {
 }
 
 func TestKeyValueMap(t *testing.T) {
-	pln(Str(`<abc a="dd"  c=fff>`).KeyValueMap(' ', '=', '>'))
+	pln(Str(`<abc a="dd"  c=fff>>>>>`).KeyValueMap(' ', '=', '>'))
+	pln(Str(`<abc a="dd"  c=fff>>>>>`).KeyValueMap(' ', '=', '|'))
 }
