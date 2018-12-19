@@ -21,33 +21,33 @@ func (s Str) DefValue(def string) string {
 }
 
 // InArr : check if at least a same value exists in string array
-func (s Str) InArr(arr ...string) bool {
-	for _, a := range arr {
+func (s Str) InArr(arr ...string) (bool, int) {
+	for i, a := range arr {
 		if s.V() == a {
-			return true
+			return true, i
 		}
 	}
-	return false
+	return false, -1
 }
 
 // InMapSIKeys : check if at least a same value exists in string-key map
-func (s Str) InMapSIKeys(m map[string]int) bool {
-	for k := range m {
+func (s Str) InMapSIKeys(m map[string]int) (bool, int) {
+	for k, v := range m {
 		if s.V() == k {
-			return true
+			return true, v
 		}
 	}
-	return false
+	return false, -1
 }
 
-// InMapSSValues :
-func (s Str) InMapSSValues(m map[string]string) bool {
-	for _, v := range m {
+// InMapSSValues : check if at least a same value exists in string-value map
+func (s Str) InMapSSValues(m map[string]string) (bool, string) {
+	for k, v := range m {
 		if s.V() == v {
-			return true
+			return true, k
 		}
 	}
-	return false
+	return false, ""
 }
 
 // RemoveQuotations : Remove single or double Quotations from a string. If no quotations, do nothing
