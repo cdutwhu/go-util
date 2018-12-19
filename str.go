@@ -20,7 +20,7 @@ func (s Str) DefValue(def string) string {
 	return s.V()
 }
 
-// InArr : check if at least a same value exists in string array
+// InArr : check if at least one same value exists in string array
 func (s Str) InArr(arr ...string) (bool, int) {
 	for i, a := range arr {
 		if s.V() == a {
@@ -30,10 +30,20 @@ func (s Str) InArr(arr ...string) (bool, int) {
 	return false, -1
 }
 
-// InMapSIKeys : check if at least a same value exists in string-key map
+// InMapSIKeys : check if at least one same value exists in string-key map
 func (s Str) InMapSIKeys(m map[string]int) (bool, int) {
 	for k, v := range m {
 		if s.V() == k {
+			return true, v
+		}
+	}
+	return false, -1
+}
+
+// BeCoveredInMapSIKeys : check if at least one map(string)key value can cover the calling string
+func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
+	for k, v := range m {
+		if i := strings.Index(k, s.V()); i >= 0 {
 			return true, v
 		}
 	}
