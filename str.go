@@ -50,6 +50,16 @@ func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
 	return false, -1
 }
 
+// CoverAnyKeyInMapSI :
+func (s Str) CoverAnyKeyInMapSI(m map[string]int) (bool, int) {
+	for k, v := range m {
+		if i := strings.Index(s.V(), k); i >= 0 {
+			return true, v
+		}
+	}
+	return false, -1
+}
+
 // InMapSSValues : check if at least a same value exists in string-value map
 func (s Str) InMapSSValues(m map[string]string) (bool, string) {
 	for k, v := range m {
