@@ -43,7 +43,7 @@ func (s Str) InMapSIKeys(m map[string]int) (bool, int) {
 // BeCoveredInMapSIKeys : check if at least one map(string)key value can cover the calling string
 func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
 	for k, v := range m {
-		if i := strings.Index(k, s.V()); i >= 0 {
+		if strings.Index(k, s.V()) >= 0 {
 			return true, v
 		}
 	}
@@ -53,7 +53,7 @@ func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
 // CoverAnyKeyInMapSI :
 func (s Str) CoverAnyKeyInMapSI(m map[string]int) (bool, int) {
 	for k, v := range m {
-		if i := strings.Index(s.V(), k); i >= 0 {
+		if strings.Index(s.V(), k) >= 0 {
 			return true, v
 		}
 	}
