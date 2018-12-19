@@ -30,8 +30,8 @@ func (s Str) InArr(arr ...string) bool {
 	return false
 }
 
-// InMapKeys : check if at least a same value exists in string-key map
-func (s Str) InMapKeys(m map[string]interface{}) bool {
+// InMapSIKeys : check if at least a same value exists in string-key map
+func (s Str) InMapSIKeys(m map[string]int) bool {
 	for k := range m {
 		if s.V() == k {
 			return true
@@ -40,8 +40,8 @@ func (s Str) InMapKeys(m map[string]interface{}) bool {
 	return false
 }
 
-// InMapValues :
-func (s Str) InMapValues(m map[interface{}]string) bool {
+// InMapSSValues :
+func (s Str) InMapSSValues(m map[string]string) bool {
 	for _, v := range m {
 		if s.V() == v {
 			return true
