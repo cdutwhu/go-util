@@ -1,5 +1,10 @@
 package util
 
+const MaxUint = ^uint(0)
+const MinUint = 0
+const MaxInt = int(MaxUint >> 1)
+const MinInt = -MaxInt - 1
+
 // I32 is int 'class'
 type I32 int
 
