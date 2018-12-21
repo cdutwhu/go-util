@@ -26,8 +26,7 @@ func (i I64) Nearest(arr ...int64) (int64, int) {
 	for idx, a := range arr {
 		dis := int64(math.Abs(float64(a - i.V())))
 		if dis < minDis {
-			minDis = dis
-			minIdx = idx
+			minDis, minIdx = dis, idx
 		}
 	}
 	return arr[minIdx], minIdx

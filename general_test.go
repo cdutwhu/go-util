@@ -31,9 +31,7 @@ func TestRemove(t *testing.T) {
 }
 
 func TestMoveItemAfter(t *testing.T) {
-	arr := []interface{}{1, 2, 3, 4, 5}
-	MoveItemAfter(&arr, func(after, move interface{}) bool {
-		return after == 1 && move == 5
-	})
+	arr := []interface{}{1, 2, 3, 4, 5, 100}
+	MoveItemAfter(&arr, func(after, move interface{}) bool { return after == 3 && move == 100 })
 	fmt.Println(arr)
 }
