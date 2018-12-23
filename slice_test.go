@@ -13,12 +13,17 @@ func TestSearch(t *testing.T) {
 	fmt.Println(r, i, ok)
 }
 
+func TestInsertBefore(t *testing.T) {
+	arr := []interface{}{1, 2, 3, 4, 5}
+	b := 5
+	InsertBefore(&arr, b, func(a interface{}) bool { return a.(int) == b-2 })
+	fmt.Println(arr)
+}
+
 func TestInsertAfter(t *testing.T) {
 	arr := []interface{}{1, 2, 3, 4, 5}
 	b := 5
-	InsertAfter(&arr, b, func(a interface{}) bool {
-		return a.(int) == b-2
-	})
+	InsertAfter(&arr, b, func(a interface{}) bool { return a.(int) == b-2 })
 	fmt.Println(arr)
 }
 

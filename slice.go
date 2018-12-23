@@ -10,6 +10,19 @@ func Search(arr []interface{}, check func(each interface{}) bool) (interface{}, 
 	return nil, -1, false
 }
 
+// InsertBefore :
+func InsertBefore(arr *[]interface{}, item interface{}, check func(each interface{}) bool) (int, bool) {
+	for i, a := range *arr {
+		if check(a) {
+			*arr = append(*arr, 0)
+			copy((*arr)[i+1:], (*arr)[i:])
+			(*arr)[i] = item
+			return i, true
+		}
+	}
+	return -1, false
+}
+
 // InsertAfter :
 func InsertAfter(arr *[]interface{}, item interface{}, check func(each interface{}) bool) (int, bool) {
 	for i, a := range *arr {

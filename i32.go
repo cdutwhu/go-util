@@ -1,5 +1,6 @@
 package util
 
+//
 const MaxUint, MinUint, MaxInt, MinInt = ^uint(0), 0, int(MaxUint >> 1), -MaxInt - 1
 
 // I32 is int 'class'
