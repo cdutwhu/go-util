@@ -4,6 +4,13 @@ import (
 	"strings"
 )
 
+type QFlag int
+
+const (
+	QSingle QFlag = 1
+	QDouble QFlag = 2
+)
+
 // Str is string 'class'
 type Str string
 
@@ -68,6 +75,27 @@ func (s Str) InMapSSValues(m map[string]string) (bool, string) {
 		}
 	}
 	return false, ""
+}
+
+// MakeQuotations :
+func (s Str) MakeQuotations(f QFlag) string {
+	if strings.HasPrefix(s.V(), "\"") && strings.HasSuffix(s.V(), "\"") {
+		return s.V()
+	}
+	if strings.HasPrefix(s.V(), "'") && strings.HasSuffix(s.V(), "'") {
+		return s.V()
+	}
+
+	s1, s2 := "'", "\""
+	switch f {
+	case QSingle:
+		s1 = s1 + s.V() + s1
+		return s1
+	case QDouble:
+		s2 = s2 + s.V() + s2
+		return s2
+	}
+	return s.V()
 }
 
 // RemoveQuotations : Remove single or double Quotations from a string. If no quotations, do nothing

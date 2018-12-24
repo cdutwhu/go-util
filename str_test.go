@@ -23,3 +23,7 @@ func TestKeyValueMap(t *testing.T) {
 	pln(Str(`<abc a="dd"  c=fff>>>>>`).KeyValueMap(' ', '=', '>'))
 	pln(Str(`<abc a="dd"  c=fff>>>>>`).KeyValueMap(' ', '=', '|'))
 }
+
+func TestMakeQuotation(t *testing.T) {
+	pln(Str("abc").MakeQuotations(QSingle))
+}
