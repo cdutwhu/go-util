@@ -25,5 +25,5 @@ func TestKeyValueMap(t *testing.T) {
 }
 
 func TestMakeQuotation(t *testing.T) {
-	pln(Str("abc").MakeQuotations(QSingle))
+	pln(Str("abc").MakeQuotes(QSingle))
 }

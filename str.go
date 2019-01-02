@@ -4,10 +4,13 @@ import (
 	"strings"
 )
 
+// QFlag : Flag for Quotation, single or double
 type QFlag int
 
 const (
+	// QSingle : single quotes
 	QSingle QFlag = 1
+	// QDouble ; double quotes
 	QDouble QFlag = 2
 )
 
@@ -77,8 +80,8 @@ func (s Str) InMapSSValues(m map[string]string) (bool, string) {
 	return false, ""
 }
 
-// MakeQuotations :
-func (s Str) MakeQuotations(f QFlag) string {
+// MakeQuotes :
+func (s Str) MakeQuotes(f QFlag) string {
 	if strings.HasPrefix(s.V(), "\"") && strings.HasSuffix(s.V(), "\"") {
 		return s.V()
 	}
@@ -98,8 +101,8 @@ func (s Str) MakeQuotations(f QFlag) string {
 	return s.V()
 }
 
-// RemoveQuotations : Remove single or double Quotations from a string. If no quotations, do nothing
-func (s Str) RemoveQuotations() string {
+// RemoveQuotes : Remove single or double Quotes from a string. If no quotations, do nothing
+func (s Str) RemoveQuotes() string {
 	if strings.HasPrefix(s.V(), "\"") && strings.HasSuffix(s.V(), "\"") {
 		return s.V()[1 : len(s.V())-1]
 	}
@@ -159,7 +162,7 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 	for _, kv := range strings.FieldsFunc(str, func(c rune) bool { return c == delimiter }) {
 		if strings.Contains(kv, string(assign)) {
 			kvpair := strings.Split(kv, string(assign))
-			r[kvpair[0]] = Str(kvpair[1]).RemoveQuotations()
+			r[kvpair[0]] = Str(kvpair[1]).RemoveQuotes()
 		}
 	}
 	return
