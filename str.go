@@ -4,14 +4,28 @@ import (
 	"strings"
 )
 
-// QFlag : Flag for Quotation, single or double
+// QFlag : Flag for Quotes, single or double
 type QFlag int
+
+// BFlag : Flag for Brackets
+type BFlag int
 
 const (
 	// QSingle : single quotes
 	QSingle QFlag = 1
-	// QDouble ; double quotes
+	// QDouble : double quotes
 	QDouble QFlag = 2
+
+	// BRound : round brackets
+	BRound BFlag = 1
+	// BBox : box brackets
+	BBox BFlag = 2
+	// BSquare : square brackets
+	BSquare BFlag = 2
+	// BCurly : curly brackets
+	BCurly BFlag = 3
+	// BAngle : angle brackets
+	BAngle BFlag = 4
 )
 
 // Str is string 'class'
@@ -53,7 +67,7 @@ func (s Str) InMapSIKeys(m map[string]int) (bool, int) {
 // BeCoveredInMapSIKeys : check if at least one map(string)key value can cover the calling string
 func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
 	for k, v := range m {
-		if strings.Index(k, s.V()) >= 0 {
+		if sI(k, s.V()) >= 0 {
 			return true, v
 		}
 	}
@@ -63,7 +77,7 @@ func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
 // CoverAnyKeyInMapSI :
 func (s Str) CoverAnyKeyInMapSI(m map[string]int) (bool, int) {
 	for k, v := range m {
-		if strings.Index(s.V(), k) >= 0 {
+		if sI(s.V(), k) >= 0 {
 			return true, v
 		}
 	}
@@ -80,33 +94,61 @@ func (s Str) InMapSSValues(m map[string]string) (bool, string) {
 	return false, ""
 }
 
-// MakeQuotes :
-func (s Str) MakeQuotes(f QFlag) string {
-	if strings.HasPrefix(s.V(), "\"") && strings.HasSuffix(s.V(), "\"") {
-		return s.V()
-	}
-	if strings.HasPrefix(s.V(), "'") && strings.HasSuffix(s.V(), "'") {
-		return s.V()
-	}
-
-	s1, s2 := "'", "\""
+// MakeBrackets :
+func (s Str) MakeBrackets(f BFlag) string {
+	bracketL, bracketR := "", ""
 	switch f {
-	case QSingle:
-		s1 = s1 + s.V() + s1
-		return s1
-	case QDouble:
-		s2 = s2 + s.V() + s2
-		return s2
+	case BRound:
+		bracketL, bracketR = "(", ")"
+	case BBox:
+		bracketL, bracketR = "[", "]"
+	// case BSquare:
+	// 	bracketL, bracketR = "[", "]"
+	case BCurly:
+		bracketL, bracketR = "{", "}"
+	case BAngle:
+		bracketL, bracketR = "<", ">"
+	default:
+		panic("error brackets flag")
+	}
+	if sHP(s.V(), bracketL) && sHS(s.V(), bracketR) {
+		return s.V()
+	}
+	return bracketL + s.V() + bracketR
+}
+
+// RemoveBrackets :
+func (s Str) RemoveBrackets() string {
+	if (sHP(s.V(), "(") && sHS(s.V(), ")")) ||
+		(sHP(s.V(), "[") && sHS(s.V(), "]")) ||
+		(sHP(s.V(), "{") && sHS(s.V(), "}")) ||
+		(sHP(s.V(), "<") && sHS(s.V(), ">")) {
+		return s.V()[1 : len(s.V())-1]
 	}
 	return s.V()
 }
 
+// MakeQuotes :
+func (s Str) MakeQuotes(f QFlag) string {
+	quote := ""
+	switch f {
+	case QSingle:
+		quote = "'"
+	case QDouble:
+		quote = "\""
+	default:
+		panic("error quotes flag")
+	}
+	if sHP(s.V(), quote) && sHS(s.V(), quote) {
+		return s.V()
+	}
+	return quote + s.V() + quote
+}
+
 // RemoveQuotes : Remove single or double Quotes from a string. If no quotations, do nothing
 func (s Str) RemoveQuotes() string {
-	if strings.HasPrefix(s.V(), "\"") && strings.HasSuffix(s.V(), "\"") {
-		return s.V()[1 : len(s.V())-1]
-	}
-	if strings.HasPrefix(s.V(), "'") && strings.HasSuffix(s.V(), "'") {
+	if (sHP(s.V(), "\"") && sHS(s.V(), "\"")) ||
+		(sHP(s.V(), "'") && sHS(s.V(), "'")) {
 		return s.V()[1 : len(s.V())-1]
 	}
 	return s.V()
@@ -114,7 +156,7 @@ func (s Str) RemoveQuotes() string {
 
 // MakePrefix :
 func (s Str) MakePrefix(prefix string) string {
-	if !strings.HasPrefix(s.V(), prefix) {
+	if !sHP(s.V(), prefix) {
 		return prefix + s.V()
 	}
 	return s.V()
@@ -122,7 +164,7 @@ func (s Str) MakePrefix(prefix string) string {
 
 // RemovePrefix :
 func (s Str) RemovePrefix(prefix string) string {
-	if strings.HasPrefix(s.V(), prefix) {
+	if sHP(s.V(), prefix) {
 		return s.V()[len(prefix):len(s.V())]
 	}
 	return s.V()
@@ -130,7 +172,7 @@ func (s Str) RemovePrefix(prefix string) string {
 
 // MakeSuffix :
 func (s Str) MakeSuffix(suffix string) string {
-	if !strings.HasSuffix(s.V(), suffix) {
+	if !sHS(s.V(), suffix) {
 		return s.V() + suffix
 	}
 	return s.V()
@@ -138,7 +180,7 @@ func (s Str) MakeSuffix(suffix string) string {
 
 // RemoveSuffix :
 func (s Str) RemoveSuffix(suffix string) string {
-	if strings.HasSuffix(s.V(), suffix) {
+	if sHS(s.V(), suffix) {
 		return s.V()[:len(s.V())-len(suffix)]
 	}
 	return s.V()
@@ -146,7 +188,7 @@ func (s Str) RemoveSuffix(suffix string) string {
 
 // RemoveTailFromLast :
 func (s Str) RemoveTailFromLast(tail string) string {
-	if i := strings.LastIndex(s.V(), tail); i >= 0 {
+	if i := sLI(s.V(), tail); i >= 0 {
 		return s.V()[:i]
 	}
 	return s.V()
@@ -156,7 +198,7 @@ func (s Str) RemoveTailFromLast(tail string) string {
 func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
 	r = make(map[string]string)
 	str := s.V()
-	if pt := strings.Index(str, string(terminator)); pt > 0 {
+	if pt := sI(str, string(terminator)); pt > 0 {
 		str = str[:pt]
 	}
 	for _, kv := range strings.FieldsFunc(str, func(c rune) bool { return c == delimiter }) {
