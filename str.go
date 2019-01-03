@@ -36,6 +36,11 @@ func (s *Str) V() string {
 	return string(*s)
 }
 
+// L : get string length
+func (s Str) L() int {
+	return len(s.V())
+}
+
 // DefValue : if s is blank, assign it with input string value, otherwise keep its current value
 func (s Str) DefValue(def string) string {
 	if len(s) == 0 {
@@ -96,25 +101,25 @@ func (s Str) InMapSSValues(m map[string]string) (bool, string) {
 
 // MakeBrackets :
 func (s Str) MakeBrackets(f BFlag) string {
-	bracketL, bracketR := "", ""
+	bracketL, bracketR := ' ', ' '
 	switch f {
 	case BRound:
-		bracketL, bracketR = "(", ")"
+		bracketL, bracketR = '(', ')'
 	case BBox:
-		bracketL, bracketR = "[", "]"
+		bracketL, bracketR = '[', ']'
 	// case BSquare:
-	// 	bracketL, bracketR = "[", "]"
+	// 	bracketL, bracketR = '[', ']'
 	case BCurly:
-		bracketL, bracketR = "{", "}"
+		bracketL, bracketR = '{', '}'
 	case BAngle:
-		bracketL, bracketR = "<", ">"
+		bracketL, bracketR = '<', '>'
 	default:
 		panic("error brackets flag")
 	}
-	if sHP(s.V(), bracketL) && sHS(s.V(), bracketR) {
+	if sHP(s.V(), string(bracketL)) && sHS(s.V(), string(bracketR)) {
 		return s.V()
 	}
-	return bracketL + s.V() + bracketR
+	return string(bracketL) + s.V() + string(bracketR)
 }
 
 // RemoveBrackets :
@@ -126,6 +131,46 @@ func (s Str) RemoveBrackets() string {
 		return s.V()[1 : len(s.V())-1]
 	}
 	return s.V()
+}
+
+// BracketsPos :
+func (s Str) BracketsPos(f BFlag, level, index int) (left, right int) {
+	bracketL, bracketR := ' ', ' '
+	switch f {
+	case BRound:
+		bracketL, bracketR = '(', ')'
+	case BBox:
+		bracketL, bracketR = '[', ']'
+	// case BSquare:
+	// 	bracketL, bracketR = '[', ']'
+	case BCurly:
+		bracketL, bracketR = '{', '}'
+	case BAngle:
+		bracketL, bracketR = '<', '>'
+	default:
+		panic("error brackets flag")
+	}
+
+	curLevel, curIndex := 0, 0
+	for i, c := range s.V() {
+		if c == bracketL {
+			curLevel++
+		}
+		if c == bracketR {
+			curLevel--
+		}
+		if curLevel == level && c == bracketL {
+			left = i
+		}
+		if curLevel == level-1 && c == bracketR {
+			right = i
+			curIndex++
+			if curIndex == index {
+				break
+			}
+		}
+	}
+	return
 }
 
 // MakeQuotes :
