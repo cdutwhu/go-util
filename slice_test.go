@@ -40,3 +40,8 @@ func TestMoveItemAfter(t *testing.T) {
 	MoveItemAfter(&arr, func(after, move interface{}) bool { return after == 3 && move == 100 })
 	fmt.Println(arr)
 }
+
+func TestRemoveRepByLoop(t *testing.T) {
+	arr := []interface{}{"abc", "::", "abc", "de", "de"}
+	fmt.Println(RemoveRep(arr))
+}

@@ -19,9 +19,21 @@ func TestRemoveTailFromLast(t *testing.T) {
 	pln(Str("a.sif.abc").RemoveTailFromLast("."))
 }
 
+func TestRemoveBlankBefore(t *testing.T) {
+	pln(Str(`a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankBefore("=", ":"))
+}
+
+func TestRemoveBlankAfter(t *testing.T) {
+	pln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankAfter("=", ":"))
+}
+
+func TestRemoveBlankNear(t *testing.T) {
+	pln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNear(":", "="))
+}
+
 func TestKeyValueMap(t *testing.T) {
-	pln(Str(`<abc a="dd"  c=fff>>>>>`).KeyValueMap(' ', '=', '>'))
-	pln(Str(`<abc a="dd"  c=fff>>>>>`).KeyValueMap(' ', '=', '|'))
+	pln(Str(`<abc a =	"dd"  c		= 	fff>>>>>`).KeyValueMap(' ', '=', '>'))
+	pln(Str(`<abc a	 	: 	"dd"  c   =			fff>>>>>`).KeyValueMap(' ', ':', '|'))
 }
 
 func TestMakeQuotes(t *testing.T) {

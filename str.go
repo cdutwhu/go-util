@@ -194,10 +194,52 @@ func (s Str) RemoveTailFromLast(tail string) string {
 	return s.V()
 }
 
+// RemoveBlankBefore :
+func (s Str) RemoveBlankBefore(strs ...string) string {
+	whole := s.V()
+	for _, str := range strs {
+		str0, str1 := " "+str, "\t"+str
+	NEXT:
+		if p := sI(whole, str0); p >= 0 {
+			whole = whole[:p] + whole[p+1:]
+			goto NEXT
+		}
+		if p := sI(whole, str1); p >= 0 {
+			whole = whole[:p] + whole[p+1:]
+			goto NEXT
+		}
+	}
+	return whole
+}
+
+// RemoveBlankAfter :
+func (s Str) RemoveBlankAfter(strs ...string) string {
+	whole := s.V()
+	for _, str := range strs {
+		str0, str1 := str+" ", str+"\t"
+	NEXT:
+		if p := sI(whole, str0); p >= 0 {
+			whole = whole[:p+len(str0)-1] + whole[p+len(str0):]
+			goto NEXT
+		}
+		if p := sI(whole, str1); p >= 0 {
+			whole = whole[:p+len(str0)-1] + whole[p+len(str0):]
+			goto NEXT
+		}
+	}
+	return whole
+}
+
+// RemoveBlankNear :
+func (s Str) RemoveBlankNear(strs ...string) string {
+	s0 := s.RemoveBlankBefore(strs...)
+	return Str(s0).RemoveBlankAfter(strs...)
+}
+
 // KeyValueMap :
 func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
 	r = make(map[string]string)
-	str := s.V()
+	str := s.RemoveBlankNear(string(assign))
 	if pt := sI(str, string(terminator)); pt > 0 {
 		str = str[:pt]
 	}

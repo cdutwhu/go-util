@@ -65,3 +65,33 @@ func MoveItemAfter(arr *[]interface{}, check func(after, move interface{}) bool)
 	}
 	return -1, false
 }
+
+// RemoveRep :
+func RemoveRep(arr []interface{}) (result []interface{}) {
+OUTER:
+	for i := range arr {
+		for j := range result {
+			if arr[i] == result[j] {
+				continue OUTER
+			}
+		}
+		result = append(result, arr[i])
+	}
+	return result
+}
+
+// SA2GA :
+func SA2GA(strs []string) (result []interface{}) {
+	for _, s := range strs {
+		result = append(result, s)
+	}
+	return
+}
+
+// GA2SA :
+func GA2SA(arr []interface{}) (result []string) {
+	for _, a := range arr {
+		result = append(result, a.(string))
+	}
+	return
+}
