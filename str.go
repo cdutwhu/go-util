@@ -49,6 +49,18 @@ func (s Str) DefValue(def string) string {
 	return s.V()
 }
 
+// HasAny :
+func (s Str) HasAny(cks ...rune) (bool, int, int) {
+	for i, c := range s.V() {
+		for j, ck := range cks {
+			if c == ck {
+				return true, i, j
+			}
+		}
+	}
+	return false, -1, -1
+}
+
 // InArr : check if at least one same value exists in string array
 func (s Str) InArr(arr ...string) (bool, int) {
 	for i, a := range arr {
