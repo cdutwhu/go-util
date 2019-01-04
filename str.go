@@ -50,15 +50,15 @@ func (s Str) DefValue(def string) string {
 }
 
 // HasAny :
-func (s Str) HasAny(cks ...rune) (bool, int, int) {
-	for i, c := range s.V() {
-		for j, ck := range cks {
+func (s Str) HasAny(cks ...rune) bool {
+	for _, c := range s.V() {
+		for _, ck := range cks {
 			if c == ck {
-				return true, i, j
+				return true
 			}
 		}
 	}
-	return false, -1, -1
+	return false
 }
 
 // InArr : check if at least one same value exists in string array
