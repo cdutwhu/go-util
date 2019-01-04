@@ -185,6 +185,46 @@ func (s Str) BracketsPos(f BFlag, level, index int) (left, right int) {
 	return
 }
 
+// BracketPairCount :
+func (s Str) BracketPairCount(f BFlag) (count int) {
+	bracketL, bracketR := ' ', ' '
+	switch f {
+	case BRound:
+		bracketL, bracketR = '(', ')'
+	case BBox:
+		bracketL, bracketR = '[', ']'
+	// case BSquare:
+	// 	bracketL, bracketR = '[', ']'
+	case BCurly:
+		bracketL, bracketR = '{', '}'
+	case BAngle:
+		bracketL, bracketR = '<', '>'
+	default:
+		panic("error brackets flag")
+	}
+
+	level, inflag := 0, false
+	for _, c := range s.V() {
+		if c == bracketL {
+			level++
+		}
+		if c == bracketR {
+			level--
+			if level == 0 {
+				inflag = false
+			}
+		}
+		if level == 1 {
+			if !inflag {
+				count++
+				inflag = true
+			}
+		}
+	}
+
+	return count
+}
+
 // MakeQuotes :
 func (s Str) MakeQuotes(f QFlag) string {
 	quote := ""
@@ -308,6 +348,14 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 	}
 	return
 }
+
+// LooseSearch :
+// func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
+// 	if len(aim) != 2 {
+// 		pln("<aim> should only have 2 chars")
+// 		return false, -1
+// 	}
+// }
 
 // AllAreIdentical : check all the input strings are identical
 func AllAreIdentical(arr ...string) bool {
