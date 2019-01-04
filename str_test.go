@@ -4,6 +4,16 @@ import (
 	"testing"
 )
 
+func TestBeCoveredInMapSIKeys(t *testing.T) {
+	m := map[string]int{"abc": 100, "def": 200}
+	pln(Str("abc").BeCoveredInMapSIKeys(m))
+}
+
+func TestCoverAnyKeyInMapSI(t *testing.T) {
+	m := map[string]int{"abc": 100, "def": 200}
+	pln(Str("def").CoverAnyKeyInMapSI(m))
+}
+
 func TestRemovePrefix(t *testing.T) {
 	pln(Str("sif.abc").RemovePrefix("sif."))
 }
@@ -20,8 +30,16 @@ func TestRemoveBlankBefore(t *testing.T) {
 	pln(Str(`a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankBefore("=", ":"))
 }
 
+func TestRemoveBlankNBefore(t *testing.T) {
+	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNBefore(10, ":"))
+}
+
 func TestRemoveBlankAfter(t *testing.T) {
 	pln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankAfter("=", ":"))
+}
+
+func TestRemoveBlankNAfter(t *testing.T) {
+	// pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(10, ":"))
 }
 
 func TestRemoveBlankNear(t *testing.T) {

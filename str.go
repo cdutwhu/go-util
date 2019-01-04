@@ -81,10 +81,20 @@ func (s Str) InMapSIKeys(m map[string]int) (bool, int) {
 	return false, -1
 }
 
+// InMapSSValues : check if at least a same value exists in string-value map
+func (s Str) InMapSSValues(m map[string]string) (bool, string) {
+	for k, v := range m {
+		if s.V() == v {
+			return true, k
+		}
+	}
+	return false, ""
+}
+
 // BeCoveredInMapSIKeys : check if at least one map(string)key value can cover the calling string
 func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
 	for k, v := range m {
-		if sI(k, s.V()) >= 0 {
+		if sC(k, s.V()) {
 			return true, v
 		}
 	}
@@ -94,21 +104,11 @@ func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
 // CoverAnyKeyInMapSI :
 func (s Str) CoverAnyKeyInMapSI(m map[string]int) (bool, int) {
 	for k, v := range m {
-		if sI(s.V(), k) >= 0 {
+		if sC(s.V(), k) {
 			return true, v
 		}
 	}
 	return false, -1
-}
-
-// InMapSSValues : check if at least a same value exists in string-value map
-func (s Str) InMapSSValues(m map[string]string) (bool, string) {
-	for k, v := range m {
-		if s.V() == v {
-			return true, k
-		}
-	}
-	return false, ""
 }
 
 // MakeBrackets :
@@ -291,6 +291,27 @@ func (s Str) RemoveTailFromLast(tail string) string {
 	return s.V()
 }
 
+// RemoveBlankNBefore :
+func (s Str) RemoveBlankNBefore(n int, str string) string {
+	whole, left, right, strs := s.V(), "", "", []string{}
+	for i := 0; i < n; i++ {
+		if p := sI(whole, str); p >= 0 {
+			left, right = whole[:p+1], whole[p+1:]
+			left, whole = Str(left).RemoveBlankBefore(str), right
+			strs = append(strs, left)
+			if i == n-1 {
+				strs = append(strs, right)
+			}
+		} else {
+			if right != "" {
+				strs = append(strs, right)
+			}
+			break
+		}
+	}
+	return sJ(strs, "")
+}
+
 // RemoveBlankBefore :
 func (s Str) RemoveBlankBefore(strs ...string) string {
 	whole := s.V()
@@ -308,6 +329,20 @@ func (s Str) RemoveBlankBefore(strs ...string) string {
 	}
 	return whole
 }
+
+// RemoveBlankNAfter :
+// func (s Str) RemoveBlankNAfter(n int, str string) string {
+// 	whole, left, right, strs := s.V(), "", "", []string{}
+// 	for i := 0; i < n; i++ {
+// 		if p := sLI(whole, str); p >= 0 {
+
+// 		} else {
+
+// 			break
+// 		}
+// 	}
+// 	return sJ(strs, "")
+// }
 
 // RemoveBlankAfter :
 func (s Str) RemoveBlankAfter(strs ...string) string {
@@ -348,6 +383,11 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 	}
 	return
 }
+
+// KeyValuePair :
+// func (s Str) KeyValuePair(delimiter, assign, terminator rune) (k string, v string) {
+
+// }
 
 // LooseSearch :
 // func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
