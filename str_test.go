@@ -52,7 +52,7 @@ func TestKeyValueMap(t *testing.T) {
 }
 
 func TestKeyValuePair(t *testing.T) {
-	k, v := Str(`<abc a =	"dd"  c		= 	fff>>>>>`).KeyValuePair('=', ' ', ' ', true)
+	k, v := Str(`   <abc a =	"dd"  c		= 	fff>>>>>`).KeyValuePair('=', '~', ' ', true, false)
 	pln(k)
 	pln(v)
 }

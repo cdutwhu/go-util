@@ -13,6 +13,7 @@ var (
 	sLI = strings.LastIndex
 	sJ  = strings.Join
 	sS  = strings.Split
+	sT  = strings.Trim
 	sTL = strings.TrimLeft
 	sTR = strings.TrimRight
 	pln = fmt.Println
