@@ -417,11 +417,11 @@ func (s Str) KeyValuePair(assign, terminatorK, terminatorV rune, rmQuotes, trimB
 			v = str[p+1 : p+1+pv]
 		}
 	}
-	if rmQuotes {
-		k, v = Str(k).RemoveQuotes(), Str(v).RemoveQuotes()
-	}
 	if trimBlank {
 		k, v = sT(k, " \t"), sT(v, " \t")
+	}
+	if rmQuotes {
+		k, v = Str(k).RemoveQuotes(), Str(v).RemoveQuotes()
 	}
 	return
 }
