@@ -31,7 +31,7 @@ func TestRemoveBlankBefore(t *testing.T) {
 }
 
 func TestRemoveBlankNBefore(t *testing.T) {
-	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNBefore(10, ":"))
+	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNBefore(1, ":"))
 }
 
 func TestRemoveBlankAfter(t *testing.T) {
@@ -39,7 +39,7 @@ func TestRemoveBlankAfter(t *testing.T) {
 }
 
 func TestRemoveBlankNAfter(t *testing.T) {
-	// pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(10, ":"))
+	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(3, ":"))
 }
 
 func TestRemoveBlankNear(t *testing.T) {
@@ -49,6 +49,12 @@ func TestRemoveBlankNear(t *testing.T) {
 func TestKeyValueMap(t *testing.T) {
 	pln(Str(`<abc a =	"dd"  c		= 	fff>>>>>`).KeyValueMap(' ', '=', '>'))
 	pln(Str(`<abc a	 	: 	"dd"  c   =			fff>>>>>`).KeyValueMap(' ', ':', '|'))
+}
+
+func TestKeyValuePair(t *testing.T) {
+	k, v := Str(`<abc a =	"dd"  c		= 	fff>>>>>`).KeyValuePair('=', ' ', ' ', true)
+	pln(k)
+	pln(v)
 }
 
 func TestMakeQuotes(t *testing.T) {

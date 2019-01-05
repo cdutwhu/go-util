@@ -291,27 +291,6 @@ func (s Str) RemoveTailFromLast(tail string) string {
 	return s.V()
 }
 
-// RemoveBlankNBefore :
-func (s Str) RemoveBlankNBefore(n int, str string) string {
-	whole, left, right, strs := s.V(), "", "", []string{}
-	for i := 0; i < n; i++ {
-		if p := sI(whole, str); p >= 0 {
-			left, right = whole[:p+1], whole[p+1:]
-			left, whole = Str(left).RemoveBlankBefore(str), right
-			strs = append(strs, left)
-			if i == n-1 {
-				strs = append(strs, right)
-			}
-		} else {
-			if right != "" {
-				strs = append(strs, right)
-			}
-			break
-		}
-	}
-	return sJ(strs, "")
-}
-
 // RemoveBlankBefore :
 func (s Str) RemoveBlankBefore(strs ...string) string {
 	whole := s.V()
@@ -329,20 +308,6 @@ func (s Str) RemoveBlankBefore(strs ...string) string {
 	}
 	return whole
 }
-
-// RemoveBlankNAfter :
-// func (s Str) RemoveBlankNAfter(n int, str string) string {
-// 	whole, left, right, strs := s.V(), "", "", []string{}
-// 	for i := 0; i < n; i++ {
-// 		if p := sLI(whole, str); p >= 0 {
-
-// 		} else {
-
-// 			break
-// 		}
-// 	}
-// 	return sJ(strs, "")
-// }
 
 // RemoveBlankAfter :
 func (s Str) RemoveBlankAfter(strs ...string) string {
@@ -368,6 +333,62 @@ func (s Str) RemoveBlankNear(strs ...string) string {
 	return Str(s0).RemoveBlankAfter(strs...)
 }
 
+// RemoveBlankNBefore :
+func (s Str) RemoveBlankNBefore(n int, str string) string {
+	// whole, left, right, strs := s.V(), "", "", []string{}
+	// for i := 0; i < n; i++ {
+	// 	if p := sI(whole, str); p >= 0 {
+	// 		left, right = whole[:p+1], whole[p+1:]
+	// 		left, whole = Str(left).RemoveBlankBefore(str), right
+	// 		strs = append(strs, left)
+	// 		if i == n-1 {
+	// 			strs = append(strs, right)
+	// 		}
+	// 	} else {
+	// 		if right != "" {
+	// 			strs = append(strs, right)
+	// 		}
+	// 		break
+	// 	}
+	// }
+	// return sJ(strs, "")
+
+	segs, strs := sS(s.V(), str), []string{}
+	for i, seg := range segs {
+		if i == len(segs)-1 {
+			strs = append(strs, seg)
+			break
+		}
+		if i >= 0 && i < n {
+			seg = sTR(seg, " \t")
+		}
+		strs = append(strs, seg)
+	}
+	return sJ(strs, str)
+}
+
+// RemoveBlankNAfter :
+func (s Str) RemoveBlankNAfter(n int, str string) string {
+	strs := []string{}
+	for i, seg := range sS(s.V(), str) {
+		if i == 0 {
+			strs = append(strs, seg)
+			continue
+		}
+		if i >= 1 && i <= n {
+			seg = sTL(seg, " \t")
+		}
+		strs = append(strs, seg)
+	}
+	return sJ(strs, str)
+}
+
+// RemoveBlankNNear :
+func (s Str) RemoveBlankNNear(n int, str string) string {
+	s0 := s.RemoveBlankNBefore(n, str)
+	return Str(s0).RemoveBlankNAfter(n, str)
+}
+
 // KeyValueMap :
 func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
 	r = make(map[string]string)
@@ -377,7 +398,7 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 	}
 	for _, kv := range strings.FieldsFunc(str, func(c rune) bool { return c == delimiter }) {
 		if strings.Contains(kv, string(assign)) {
-			kvpair := strings.Split(kv, string(assign))
+			kvpair := sS(kv, string(assign))
 			r[kvpair[0]] = Str(kvpair[1]).RemoveQuotes()
 		}
 	}
@@ -385,9 +406,22 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 }
 
 // KeyValuePair :
-// func (s Str) KeyValuePair(delimiter, assign, terminator rune) (k string, v string) {
-
-// }
+func (s Str) KeyValuePair(assign, terminatorK, terminatorV rune, rmQuotes bool) (k, v string) {
+	str := s.RemoveBlankNNear(1, string(assign))
+	if p := sI(str, string(assign)); p >= 0 {
+		k, v = str[:p], str[p+1:]
+		if pk := sLI(k, string(terminatorK)); pk >= 0 {
+			k = str[pk+1 : p]
+		}
+		if pv := sI(v, string(terminatorV)); pv >= 0 {
+			v = str[p+1 : p+1+pv]
+		}
+	}
+	if rmQuotes {
+		k, v = Str(k).RemoveQuotes(), Str(v).RemoveQuotes()
+	}
+	return
+}
 
 // LooseSearch :
 // func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
