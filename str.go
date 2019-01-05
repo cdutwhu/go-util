@@ -355,10 +355,6 @@ func (s Str) RemoveBlankNBefore(n int, str string) string {
 
 	segs, strs := sS(s.V(), str), []string{}
 	for i, seg := range segs {
-		if i == len(segs)-1 {
-			strs = append(strs, seg)
-			break
-		}
 		if i >= 0 && i < n {
 			seg = sTR(seg, " \t")
 		}
@@ -371,10 +367,6 @@ func (s Str) RemoveBlankNBefore(n int, str string) string {
 func (s Str) RemoveBlankNAfter(n int, str string) string {
 	strs := []string{}
 	for i, seg := range sS(s.V(), str) {
-		if i == 0 {
-			strs = append(strs, seg)
-			continue
-		}
 		if i >= 1 && i <= n {
 			seg = sTL(seg, " \t")
 		}
@@ -385,8 +377,21 @@ func (s Str) RemoveBlankNAfter(n int, str string) string {
 
 // RemoveBlankNNear :
 func (s Str) RemoveBlankNNear(n int, str string) string {
-	s0 := s.RemoveBlankNBefore(n, str)
-	return Str(s0).RemoveBlankNAfter(n, str)
+	// s0 := s.RemoveBlankNBefore(n, str)
+	// return Str(s0).RemoveBlankNAfter(n, str)
+
+	segs, strs := sS(s.V(), str), []string{}
+	for i, seg := range segs {
+		if i == 0 {
+			seg = sTR(seg, " \t")
+		} else if i == n {
+			seg = sTL(seg, " \t")
+		} else if i > 0 && i < n {
+			seg = sT(seg, " \t")
+		}
+		strs = append(strs, seg)
+	}
+	return sJ(strs, str)
 }
 
 // KeyValueMap :

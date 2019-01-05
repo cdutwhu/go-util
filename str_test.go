@@ -31,7 +31,7 @@ func TestRemoveBlankBefore(t *testing.T) {
 }
 
 func TestRemoveBlankNBefore(t *testing.T) {
-	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNBefore(1, ":"))
+	pln(Str(`a a            :  m   c		:   b  e 	 :  	 f`).RemoveBlankNBefore(3, ":"))
 }
 
 func TestRemoveBlankAfter(t *testing.T) {
@@ -39,7 +39,11 @@ func TestRemoveBlankAfter(t *testing.T) {
 }
 
 func TestRemoveBlankNAfter(t *testing.T) {
-	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(3, ":"))
+	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(2, ":"))
+}
+
+func TestRemoveBlankNNear(t *testing.T) {
+	pln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNNear(1, "="))
 }
 
 func TestRemoveBlankNear(t *testing.T) {
