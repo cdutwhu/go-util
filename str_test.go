@@ -4,13 +4,21 @@ import (
 	"testing"
 )
 
+func TestIsMadeFrom(t *testing.T) {
+	pln(Str("abc").IsMadeFrom('a', 'b'))
+}
+
+func TestLooseSearch(t *testing.T) {
+	pln(Str("ab c	 def").LooseSearch("bcd", ' ', '\t', '*'))
+}
+
 func TestBeCoveredInMapSIKeys(t *testing.T) {
-	m := map[string]int{"abc": 100, "def": 200}
+	m := map[string]int{"abcd": 100, "def": 200}
 	pln(Str("abc").BeCoveredInMapSIKeys(m))
 }
 
 func TestCoverAnyKeyInMapSI(t *testing.T) {
-	m := map[string]int{"abc": 100, "def": 200}
+	m := map[string]int{"abc": 100, "deff": 200}
 	pln(Str("def").CoverAnyKeyInMapSI(m))
 }
 
@@ -31,7 +39,7 @@ func TestRemoveBlankBefore(t *testing.T) {
 }
 
 func TestRemoveBlankNBefore(t *testing.T) {
-	pln(Str(`a a            :  m   c		:   b  e 	 :  	 f`).RemoveBlankNBefore(3, ":"))
+	pln(Str(`a a            :  m   c		:   b  e 	 :  	 f`).RemoveBlankNBefore(2, ":"))
 }
 
 func TestRemoveBlankAfter(t *testing.T) {
@@ -39,11 +47,11 @@ func TestRemoveBlankAfter(t *testing.T) {
 }
 
 func TestRemoveBlankNAfter(t *testing.T) {
-	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(2, ":"))
+	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(0, ":"))
 }
 
 func TestRemoveBlankNNear(t *testing.T) {
-	pln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNNear(1, "="))
+	pln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNNear(0, "="))
 }
 
 func TestRemoveBlankNear(t *testing.T) {
@@ -104,7 +112,7 @@ func TestBracketsPos(t *testing.T) {
 		"objectType": "Group"
 	},`)
 
-	pln(s.BracketsPos(BCurly, 1, 1))
+	pln(s.BracketsPos(BCurly, 2, 3))
 }
 
 func TestBracketPairCount(t *testing.T) {

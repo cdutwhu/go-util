@@ -11,21 +11,16 @@ type QFlag int
 type BFlag int
 
 const (
-	// QSingle : single quotes
-	QSingle QFlag = 1
-	// QDouble : double quotes
-	QDouble QFlag = 2
+	QSingle QFlag = 1 // single quotes
+	QDouble QFlag = 2 // double quotes
+)
 
-	// BRound : round brackets
-	BRound BFlag = 1
-	// BBox : box brackets
-	BBox BFlag = 2
-	// BSquare : square brackets
-	BSquare BFlag = 2
-	// BCurly : curly brackets
-	BCurly BFlag = 3
-	// BAngle : angle brackets
-	BAngle BFlag = 4
+const (
+	BRound  BFlag = 1 // round brackets
+	BBox    BFlag = 2 // box brackets
+	BSquare BFlag = 2 // square brackets
+	BCurly  BFlag = 3 // curly brackets
+	BAngle  BFlag = 4 // angle brackets
 )
 
 // Str is string 'class'
@@ -59,6 +54,20 @@ func (s Str) HasAny(cks ...rune) bool {
 		}
 	}
 	return false
+}
+
+// IsMadeFrom :
+func (s Str) IsMadeFrom(chars ...rune) bool {
+NEXT:
+	for _, c := range s.V() {
+		for _, ck := range chars {
+			if c == ck {
+				continue NEXT
+			}
+		}
+		return false
+	}
+	return true
 }
 
 // InArr : check if at least one same value exists in string array
@@ -146,7 +155,7 @@ func (s Str) RemoveBrackets() string {
 }
 
 // BracketsPos :
-func (s Str) BracketsPos(f BFlag, level, index int) (left, right int) {
+func (s Str) BracketsPos(f BFlag, level, index int) (str string, left, right int) {
 	bracketL, bracketR := ' ', ' '
 	switch f {
 	case BRound:
@@ -182,7 +191,7 @@ func (s Str) BracketsPos(f BFlag, level, index int) (left, right int) {
 			}
 		}
 	}
-	return
+	return s.V()[left : right+1], left, right
 }
 
 // BracketPairCount :
@@ -355,7 +364,7 @@ func (s Str) RemoveBlankNBefore(n int, str string) string {
 
 	segs, strs := sS(s.V(), str), []string{}
 	for i, seg := range segs {
-		if i >= 0 && i < n {
+		if i < n {
 			seg = sTR(seg, " \t")
 		}
 		strs = append(strs, seg)
@@ -382,11 +391,11 @@ func (s Str) RemoveBlankNNear(n int, str string) string {
 
 	segs, strs := sS(s.V(), str), []string{}
 	for i, seg := range segs {
-		if i == 0 {
+		if i == 0 && i != n {
 			seg = sTR(seg, " \t")
 		} else if i == n {
 			seg = sTL(seg, " \t")
-		} else if i > 0 && i < n {
+		} else if i >= 1 && i < n {
 			seg = sT(seg, " \t")
 		}
 		strs = append(strs, seg)
@@ -432,12 +441,21 @@ func (s Str) KeyValuePair(assign, terminatorK, terminatorV rune, rmQuotes, trimB
 }
 
 // LooseSearch :
-// func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
-// 	if len(aim) != 2 {
-// 		pln("<aim> should only have 2 chars")
-// 		return false, -1
-// 	}
-// }
+func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
+	if len(aim) != 2 {
+		pln("<aim> should only have 2 chars")
+		return false, -1
+	}
+
+	if p := sI(s.V(), string(aim[0])); p >= 0 {
+		if pe := sI(s.V()[p+1:], string(aim[1])); pe >= 0 {
+			if Str(s.V()[p+1 : p+1+pe]).IsMadeFrom(ignore...) {
+				return true, p
+			}
+		}
+	}
+	return false, -1
+}
 
 // AllAreIdentical : check all the input strings are identical
 func AllAreIdentical(arr ...string) bool {
