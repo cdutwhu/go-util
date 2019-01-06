@@ -9,7 +9,7 @@ func TestIsMadeFrom(t *testing.T) {
 }
 
 func TestLooseSearch(t *testing.T) {
-	pln(Str("ab c	 def").LooseSearch("bcd", ' ', '\t', '*'))
+	pln(Str("ab C C		C 	* d	 e *.fc  * c			d").LooseSearch("Cde.", ' ', '\t', '*'))
 }
 
 func TestBeCoveredInMapSIKeys(t *testing.T) {

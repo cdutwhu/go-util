@@ -230,7 +230,6 @@ func (s Str) BracketPairCount(f BFlag) (count int) {
 			}
 		}
 	}
-
 	return count
 }
 
@@ -440,21 +439,44 @@ func (s Str) KeyValuePair(assign, terminatorK, terminatorV rune, rmQuotes, trimB
 	return
 }
 
-// LooseSearch :
-func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
+// LooseSearch2Chars :
+func (s Str) LooseSearch2Chars(aim string, ignore ...rune) (bool, int) {
 	if len(aim) != 2 {
-		pln("<aim> should only have 2 chars")
+		pln("<aim> string should be 2 chars")
 		return false, -1
 	}
-
-	if p := sI(s.V(), string(aim[0])); p >= 0 {
-		if pe := sI(s.V()[p+1:], string(aim[1])); pe >= 0 {
-			if Str(s.V()[p+1 : p+1+pe]).IsMadeFrom(ignore...) {
-				return true, p
+	for p, c := range s.V() {
+		if c == rune(aim[0]) && p < s.L()-1 {
+			if pe := sI(s.V()[p+1:], string(aim[1])); pe >= 0 {
+				if Str(s.V()[p+1 : p+1+pe]).IsMadeFrom(ignore...) {
+					return true, p
+				}
 			}
 		}
 	}
 	return false, -1
+}
+
+// LooseSearch :
+func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
+	if len(aim) == 1 {
+		if p := sI(s.V(), string(aim[0])); p >= 0 {
+			return true, p
+		}
+		return false, -1
+	}
+	findpos := -1
+	for i := 0; i < len(aim)-1; i++ {
+		sub2c := string(aim[i]) + string(aim[i+1])
+		find, pos := s.LooseSearch2Chars(sub2c, ignore...)
+		if i == 0 {
+			findpos = pos
+		}
+		if !find {
+			return false, -1
+		}
+	}
+	return true, findpos
 }
 
 // AllAreIdentical : check all the input strings are identical
