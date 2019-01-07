@@ -418,7 +418,7 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 	return
 }
 
-// KeyValuePair :
+// KeyValuePair : (if assign mark cannot be found, k is empty, v is original string)
 func (s Str) KeyValuePair(assign, terminatorK, terminatorV rune, rmQuotes, trimBlank bool) (k, v string) {
 	str := s.RemoveBlankNNear(1, string(assign))
 	if p := sI(str, string(assign)); p >= 0 {
@@ -429,6 +429,8 @@ func (s Str) KeyValuePair(assign, terminatorK, terminatorV rune, rmQuotes, trimB
 		if pv := sI(v, string(terminatorV)); pv >= 0 {
 			v = str[p+1 : p+1+pv]
 		}
+	} else {
+		return "", s.V()
 	}
 	if trimBlank {
 		k, v = sT(k, " \t"), sT(v, " \t")
