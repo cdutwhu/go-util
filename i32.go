@@ -34,3 +34,14 @@ func (i I32) InArr(arr ...int) bool {
 	}
 	return false
 }
+
+// MinOf :
+func MinOf(vars ...int) int {
+	min := vars[0]
+	for _, i := range vars {
+		if min > i {
+			min = i
+		}
+	}
+	return min
+}

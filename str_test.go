@@ -12,6 +12,10 @@ func TestLooseSearch(t *testing.T) {
 	pln(Str("ab C C		C 	* d	 e *.fc  * c			d").LooseSearch("Cde.", ' ', '\t', '*'))
 }
 
+func TestTrimInternal(t *testing.T) {
+	pln(Str("****abCCC**  ***de***.**fc*c**d**** ").TrimInternal('*', 2))
+}
+
 func TestBeCoveredInMapSIKeys(t *testing.T) {
 	m := map[string]int{"abcd": 100, "def": 200}
 	pln(Str("abc").BeCoveredInMapSIKeys(m))

@@ -1,9 +1,5 @@
 package util
 
-import (
-	"strings"
-)
-
 // QFlag : Flag for Quotes, single or double
 type QFlag int
 
@@ -42,6 +38,14 @@ func (s Str) DefValue(def string) string {
 		return def
 	}
 	return s.V()
+}
+
+// Repeat :
+func (s Str) Repeat(n int) (r string) {
+	for i := 0; i < n; i++ {
+		r += s.V()
+	}
+	return r
 }
 
 // HasAny :
@@ -402,6 +406,55 @@ func (s Str) RemoveBlankNNear(n int, str string) string {
 	return sJ(strs, str)
 }
 
+// TrimInternal :
+func (s Str) TrimInternal(cutset rune, nkeep int) (r string) {
+	pos, lens, strs := []int{}, []int{}, []string{}
+	for p, c := range s.V() {
+		if p < s.L()-1 {
+			cNext := rune(s.V()[p+1])
+			if c != cutset && cNext == cutset {
+				pos = append(pos, p+1)
+			}
+		}
+	}
+NEXT:
+	for _, p := range pos {
+		l := s.V()[p:]
+		for i, c := range l {
+			if c != cutset {
+				lens = append(lens, MinOf(i, nkeep))
+				continue NEXT
+			}
+		}
+	}
+	for _, str := range sFF(s.V(), func(c rune) bool { return c == cutset }) {
+		strs = append(strs, str)
+	}
+	cntL, cntR := 0, 0
+	for p, c := range s.V() {
+		if c != cutset {
+			cntL = p
+			break
+		}
+	}
+	for p := s.L() - 1; p >= 0; p-- {
+		if rune(s.V()[p]) != cutset {
+			cntR = s.L() - p - 1
+			break
+		}
+	}
+
+	r += Str(cutset).Repeat(cntL)
+	for i, str := range strs {
+		r += str
+		if i < len(strs)-1 {
+			r += Str(cutset).Repeat(lens[i])
+		}
+	}
+	r += Str(cutset).Repeat(cntR)
+	return r
+}
+
 // KeyValueMap :
 func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
 	r = make(map[string]string)
@@ -409,8 +462,8 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 	if pt := sI(str, string(terminator)); pt > 0 {
 		str = str[:pt]
 	}
-	for _, kv := range strings.FieldsFunc(str, func(c rune) bool { return c == delimiter }) {
-		if strings.Contains(kv, string(assign)) {
+	for _, kv := range sFF(str, func(c rune) bool { return c == delimiter }) {
+		if sC(kv, string(assign)) {
 			kvpair := sS(kv, string(assign))
 			r[kvpair[0]] = Str(kvpair[1]).RemoveQuotes()
 		}
