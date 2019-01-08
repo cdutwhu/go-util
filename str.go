@@ -488,15 +488,15 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 }
 
 // KeyValuePair : (if assign mark cannot be found, k is empty, v is original string)
-func (s Str) KeyValuePair(assign, terminatorK, terminatorV rune, rmQuotes, trimBlank bool) (k, v string) {
-	str := s.RemoveBlankNNear(1, string(assign))
-	if p := sI(str, string(assign)); p >= 0 {
-		k, v = str[:p], str[p+1:]
+func (s Str) KeyValuePair(assign string, terminatorK, terminatorV rune, rmQuotes, trimBlank bool) (k, v string) {
+	str := s.RemoveBlankNNear(1, assign)
+	if p := sI(str, assign); p >= 0 {
+		k, v = str[:p], str[p+len(assign):]
 		if pk := sLI(k, string(terminatorK)); pk >= 0 {
 			k = str[pk+1 : p]
 		}
 		if pv := sI(v, string(terminatorV)); pv >= 0 {
-			v = str[p+1 : p+1+pv]
+			v = str[p+len(assign) : p+len(assign)+pv]
 		}
 	} else {
 		return "", s.V()
