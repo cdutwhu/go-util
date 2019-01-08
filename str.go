@@ -465,6 +465,9 @@ func (s Str) TrimInternalEachLine(cutset rune, nkeep int) (r string) {
 			strs = append(strs, "\n")
 		}
 	}
+	if s.V()[s.L()-1] == '\n' {
+		return sJ(strs, "") + "\n"
+	}
 	return sJ(strs, "")
 }
 
