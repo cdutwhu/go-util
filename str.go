@@ -455,6 +455,19 @@ NEXT:
 	return r
 }
 
+// TrimInternalEachLine :
+func (s Str) TrimInternalEachLine(cutset rune, nkeep int) (r string) {
+	strs := []string{}
+	lns := sFF(s.V(), func(c rune) bool { return c == '\n' })
+	for i, ln := range lns {
+		strs = append(strs, Str(ln).TrimInternal(cutset, nkeep))
+		if i < len(lns)-1 {
+			strs = append(strs, "\n")
+		}
+	}
+	return sJ(strs, "")
+}
+
 // KeyValueMap :
 func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
 	r = make(map[string]string)

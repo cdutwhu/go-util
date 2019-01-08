@@ -13,7 +13,8 @@ func TestLooseSearch(t *testing.T) {
 }
 
 func TestTrimInternal(t *testing.T) {
-	pln(Str("****abCCC**  ***de***.**fc*c**d**** ").TrimInternal('*', 2))
+	pln(Str(`*****abc*******abCCC**
+***de***.**fc*c**d****`).TrimInternal('*', 1))
 }
 
 func TestBeCoveredInMapSIKeys(t *testing.T) {
