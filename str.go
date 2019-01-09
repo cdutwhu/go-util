@@ -1,5 +1,9 @@
 package util
 
+import (
+	"encoding/json"
+)
+
 // QFlag : Flag for Quotes, single or double
 type QFlag int
 
@@ -548,6 +552,28 @@ func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
 		}
 	}
 	return true, findpos
+}
+
+// IsXMLSegSimple :
+func (s Str) IsXMLSegSimple() bool {
+	c := s.BracketPairCount(BAngle)
+	tagsStr, _, _ := s.BracketsPos(BAngle, 1, 1)
+	tageStr, _, _ := s.BracketsPos(BAngle, 1, c)
+	tage := tageStr[2 : len(tageStr)-1]
+	tags := tagsStr[1 : 1+len(tage)]
+	// pln(tagsStr)
+	// pln(tageStr)
+	// pln(tags)
+	// pln(tage)
+	return tags == tage &&
+		(tagsStr[len(tags)+1] == ' ' || tagsStr[len(tags)+1] == '>') &&
+		tagsStr[0] == '<' && tageStr[:2] == "</"
+}
+
+// IsJSON :
+func (s Str) IsJSON() bool {
+	var js json.RawMessage
+	return json.Unmarshal([]byte(s.V()), &js) == nil
 }
 
 // AllAreIdentical : check all the input strings are identical

@@ -121,7 +121,7 @@ func TestBracketsPos(t *testing.T) {
 }
 
 func TestBracketPairCount(t *testing.T) {
-	s := Str(`"member": [
+	s := Str(`{"member": [
 		{
 			"name": "Andrew Downes",
 			"account": {
@@ -140,7 +140,23 @@ func TestBracketPairCount(t *testing.T) {
 			"mbox_sha1sum": "ebd31e95054c018b10727ccffd2ef2ec3a016ee9",
 			"objectType": "Agent"
 		}
-	],`)
+	]}`)
 
 	pln(s.BracketPairCount(BCurly))
+	pln(s.IsJSON())
+}
+
+func TestIsXML(t *testing.T) {
+	s := Str(` <StaffPersonal RefId="D3E34F41-9D75-101A-8C3D-00AA001A1652">
+    <LocalId>946379881</LocalId>
+    <StateProvinceId>C2345681</StateProvinceId>
+    <!--
+  <ElectronicIdList><ElectronicId Type="01">206655</ElectronicId></ElectronicIdList>
+  -->
+    <OtherIdList>
+        <OtherId Type="0004">333333333</OtherId>
+    </OtherIdList>    
+</StaffPersonal> `)
+
+	pln(s.IsXMLSegSimple())
 }
