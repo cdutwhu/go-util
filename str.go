@@ -557,6 +557,9 @@ func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
 // IsXMLSegSimple :
 func (s Str) IsXMLSegSimple() bool {
 	c := s.BracketPairCount(BAngle)
+	if c == 0 {
+		return false
+	}
 	tagsStr, _, _ := s.BracketsPos(BAngle, 1, 1)
 	tageStr, _, _ := s.BracketsPos(BAngle, 1, c)
 	tage := tageStr[2 : len(tageStr)-1]
