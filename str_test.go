@@ -160,3 +160,8 @@ func TestIsXML(t *testing.T) {
 
 	fPln(s.IsXMLSegSimple())
 }
+
+func TestFieldsSeqContain(t *testing.T) {
+	s0 := Str("a + b + c + d")
+	fPln(s0.FieldsSeqContain("a + b + c", " + "))
+}

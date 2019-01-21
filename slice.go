@@ -104,9 +104,9 @@ func (ga GArr) L() int {
 }
 
 // Search :
-func (ga GArr) Search(check func(each interface{}) bool) (interface{}, int, bool) {
+func (ga GArr) Search(check func(idx int, each interface{}) bool) (interface{}, int, bool) {
 	for i, a := range ga {
-		if check(a) {
+		if check(i, a) {
 			return a, i, true
 		}
 	}
@@ -114,10 +114,10 @@ func (ga GArr) Search(check func(each interface{}) bool) (interface{}, int, bool
 }
 
 // InsertBefore :
-func (ga GArr) InsertBefore(item interface{}, check func(each interface{}) bool) (r []interface{}, idx int, did bool) {
+func (ga GArr) InsertBefore(item interface{}, check func(idx int, each interface{}) bool) (r []interface{}, idx int, did bool) {
 	idx = -1
 	for i, a := range ga {
-		if check(a) {
+		if check(i, a) {
 			r, idx, did = append(r, item), i, true
 		}
 		r = append(r, a)
@@ -126,11 +126,11 @@ func (ga GArr) InsertBefore(item interface{}, check func(each interface{}) bool)
 }
 
 // InsertAfter :
-func (ga GArr) InsertAfter(item interface{}, check func(each interface{}) bool) (r []interface{}, idx int, did bool) {
+func (ga GArr) InsertAfter(item interface{}, check func(idx int, each interface{}) bool) (r []interface{}, idx int, did bool) {
 	idx = -1
 	for i, a := range ga {
 		r = append(r, a)
-		if check(a) {
+		if check(i, a) {
 			r, idx, did = append(r, item), i, true
 		}
 	}
@@ -138,11 +138,11 @@ func (ga GArr) InsertAfter(item interface{}, check func(each interface{}) bool) 
 }
 
 // Remove :
-func (ga GArr) Remove(check func(each interface{}) bool) (r []interface{}, del interface{}, idx int, did bool) {
+func (ga GArr) Remove(check func(idx int, each interface{}) bool) (r []interface{}, del interface{}, idx int, did bool) {
 	idx = -1
 	for i, a := range ga {
 		r = append(r, a)
-		if check(a) {
+		if check(i, a) {
 			del, r, idx, did = a, r[:len(r)-1], i, true
 		}
 	}
@@ -154,12 +154,12 @@ func (ga GArr) MoveItemAfter(checkMove func(move interface{}) bool, checkAfter f
 	idxAfter, idxMove = -1, -1
 	for i, a0 := range ga {
 		if checkMove(a0) {
-			if rst0, del, _, ok := ga.Remove(func(each interface{}) bool { return each == a0 }); ok {
+			if rst0, del, _, ok := ga.Remove(func(idx int, each interface{}) bool { return each == a0 }); ok {
 				idxMove = i
 				ga1 := GArr(rst0)
 				for j, a1 := range ga1 {
 					if checkAfter(a1) {
-						if rst1, _, ok := ga1.InsertAfter(del, func(each interface{}) bool { return each == a1 }); ok {
+						if rst1, _, ok := ga1.InsertAfter(del, func(idx int, each interface{}) bool { return each == a1 }); ok {
 							return rst1, i, j, true
 						}
 					}
@@ -187,7 +187,7 @@ OUTER:
 // Contain :
 func (ga GArr) Contain(arr GArr) bool {
 	for _, a := range arr {
-		if _, _, ok := ga.Search(func(each interface{}) bool { return each == a }); !ok {
+		if _, _, ok := ga.Search(func(idx int, each interface{}) bool { return each == a }); !ok {
 			return false
 		}
 	}
@@ -198,7 +198,7 @@ func (ga GArr) Contain(arr GArr) bool {
 func (ga GArr) SeqContain(arr GArr) bool {
 	idxPrev := -1
 	for _, a := range arr {
-		if _, idx, ok := ga.Search(func(each interface{}) bool { return each == a }); ok {
+		if _, idx, ok := ga.Search(func(idx int, each interface{}) bool { return each == a }); ok {
 			if idx > idxPrev {
 				idxPrev = idx
 				continue
@@ -243,7 +243,7 @@ func (ga GArr) ToInts() (r []int) {
 /**********************************************************/
 
 // AS2AG : String Array to General Array Type
-func AS2AG(strs []string) (r GArr) {
+func AS2AG(strs ...string) (r GArr) {
 	for _, s := range strs {
 		r = append(r, s)
 	}
@@ -251,7 +251,7 @@ func AS2AG(strs []string) (r GArr) {
 }
 
 // AI2AG : Int Array to General Array Type
-func AI2AG(ints []int) (r GArr) {
+func AI2AG(ints ...int) (r GArr) {
 	for _, a := range ints {
 		r = append(r, a)
 	}

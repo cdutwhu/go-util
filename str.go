@@ -572,10 +572,6 @@ func (s Str) IsXMLSegSimple() bool {
 	tageStr, _, _ := s.BracketsPos(BAngle, 1, c)
 	tage := tageStr[2 : len(tageStr)-1]
 	tags := tagsStr[1 : 1+len(tage)]
-	// fPln(tagsStr)
-	// fPln(tageStr)
-	// fPln(tags)
-	// fPln(tage)
 	return tags == tage &&
 		(tagsStr[len(tags)+1] == ' ' || tagsStr[len(tags)+1] == '>') &&
 		tagsStr[0] == '<' && tageStr[:2] == "</"
@@ -585,6 +581,12 @@ func (s Str) IsXMLSegSimple() bool {
 func (s Str) IsJSON() bool {
 	var js json.RawMessage
 	return json.Unmarshal([]byte(s.V()), &js) == nil
+}
+
+// FieldsSeqContain :
+func (s Str) FieldsSeqContain(str, sep string) bool {
+	sArr0, sArr1 := sS(s.V(), sep), sS(str, sep)
+	return AS2AG(sArr0...).SeqContain(AS2AG(sArr1...))
 }
 
 // // AllAreIdentical : check all the input strings are identical
