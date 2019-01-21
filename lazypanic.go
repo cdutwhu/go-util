@@ -49,21 +49,25 @@ func PanicHandleEx(p interface{}, logfile string, isFatal bool, onPanic func(str
 }
 
 // LogOnError : write error (with stack track) to the log file when get the error
-func LogOnError(err error, logfile string) {
-	if err != nil {
-		f := getFileWithPrefix(Str(logfile).DefValue(defLog), "\n*** Log Error ***\n")
-		defer f.Close()
-		log.SetOutput(f)
-		errStackStr := errStack(err, 1, 2, 3, 4)
-		log.Println(errStackStr)
+func LogOnError(logfile string, errs ...error) {
+	for _, err := range errs {
+		if err != nil {
+			f := getFileWithPrefix(Str(logfile).DefValue(defLog), "\n*** Log Error ***\n")
+			defer f.Close()
+			log.SetOutput(f)
+			errStackStr := errStack(err, 1, 2, 3, 4)
+			log.Println(errStackStr)
+		}
 	}
 }
 
 // PanicOnError : launch a panic with error (stack track) when get the error
-func PanicOnError(err error) {
-	if err != nil {
-		if emsg := errStack(err, 1, 2, 3, 4); len(emsg) != 0 {
-			panic(emsg)
+func PanicOnError(errs ...error) {
+	for _, err := range errs {
+		if err != nil {
+			if emsg := errStack(err, 1, 2, 3, 4); len(emsg) != 0 {
+				panic(emsg)
+			}
 		}
 	}
 }
