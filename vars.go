@@ -17,6 +17,7 @@ var (
 	sTL = strings.TrimLeft
 	sTR = strings.TrimRight
 	sFF = strings.FieldsFunc
-	pln = fmt.Println
-	pf  = fmt.Printf
+
+	fPln = fmt.Println
+	fPf  = fmt.Printf
 )

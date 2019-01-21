@@ -5,89 +5,89 @@ import (
 )
 
 func TestIsMadeFrom(t *testing.T) {
-	pln(Str("abc").IsMadeFrom('a', 'b'))
+	fPln(Str("abc").IsMadeFrom('a', 'b'))
 }
 
 func TestLooseSearch(t *testing.T) {
-	pln(Str("ab C C		C 	* d	 e *.fc  * c			d").LooseSearch("Cde.", ' ', '\t', '*'))
+	fPln(Str("ab C C		C 	* d	 e *.fc  * c			d").LooseSearch("Cde.", ' ', '\t', '*'))
 }
 
 func TestTrimInternal(t *testing.T) {
-	pln(Str(`*****abc*******abCCC**
+	fPln(Str(`*****abc*******abCCC**
 ***de***.**fc*c**d****`).TrimInternal('*', 1))
 }
 
 func TestBeCoveredInMapSIKeys(t *testing.T) {
 	m := map[string]int{"abcd": 100, "def": 200}
-	pln(Str("abc").BeCoveredInMapSIKeys(m))
+	fPln(Str("abc").BeCoveredInMapSIKeys(m))
 }
 
 func TestCoverAnyKeyInMapSI(t *testing.T) {
 	m := map[string]int{"abc": 100, "deff": 200}
-	pln(Str("def").CoverAnyKeyInMapSI(m))
+	fPln(Str("def").CoverAnyKeyInMapSI(m))
 }
 
 func TestRemovePrefix(t *testing.T) {
-	pln(Str("sif.abc").RemovePrefix("sif."))
+	fPln(Str("sif.abc").RemovePrefix("sif."))
 }
 
 func TestRemoveSuffix(t *testing.T) {
-	pln(Str("sif.abc").RemoveSuffix("abc"))
+	fPln(Str("sif.abc").RemoveSuffix("abc"))
 }
 
 func TestRemoveTailFromLast(t *testing.T) {
-	pln(Str("a.sif.abc").RemoveTailFromLast("."))
+	fPln(Str("a.sif.abc").RemoveTailFromLast("."))
 }
 
 func TestRemoveBlankBefore(t *testing.T) {
-	pln(Str(`a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankBefore("=", ":"))
+	fPln(Str(`a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankBefore("=", ":"))
 }
 
 func TestRemoveBlankNBefore(t *testing.T) {
-	pln(Str(`a a            :  m   c		:   b  e 	 :  	 f`).RemoveBlankNBefore(2, ":"))
+	fPln(Str(`a a            :  m   c		:   b  e 	 :  	 f`).RemoveBlankNBefore(2, ":"))
 }
 
 func TestRemoveBlankAfter(t *testing.T) {
-	pln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankAfter("=", ":"))
+	fPln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankAfter("=", ":"))
 }
 
 func TestRemoveBlankNAfter(t *testing.T) {
-	pln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(0, ":"))
+	fPln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(0, ":"))
 }
 
 func TestRemoveBlankNNear(t *testing.T) {
-	pln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNNear(0, "="))
+	fPln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNNear(0, "="))
 }
 
 func TestRemoveBlankNear(t *testing.T) {
-	pln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNear(":", "="))
+	fPln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNear(":", "="))
 }
 
 func TestKeyValueMap(t *testing.T) {
-	pln(Str(`<abc a =	"dd"  c		= 	fff>>>>>`).KeyValueMap(' ', '=', '>'))
-	pln(Str(`<abc a	 	: 	"dd"  c   =			fff>>>>>`).KeyValueMap(' ', ':', '|'))
+	fPln(Str(`<abc a =	"dd"  c		= 	fff>>>>>`).KeyValueMap(' ', '=', '>'))
+	fPln(Str(`<abc a	 	: 	"dd"  c   =			fff>>>>>`).KeyValueMap(' ', ':', '|'))
 }
 
 func TestKeyValuePair(t *testing.T) {
 	k, v := Str(`   <abc a =     "dd"  c	: 	= 	fff>>>>>`).KeyValuePair("= ", ' ', ' ', true, false)
-	pln(k)
-	pln(v)
+	fPln(k)
+	fPln(v)
 }
 
 func TestMakeQuotes(t *testing.T) {
-	pln(Str("abc").MakeQuotes(QDouble))
+	fPln(Str("abc").MakeQuotes(QDouble))
 }
 
 func TestRemoveQuotes(t *testing.T) {
-	pln(Str("'abc'").RemoveQuotes())
+	fPln(Str("'abc'").RemoveQuotes())
 }
 
 func TestMakeBrackets(t *testing.T) {
-	pln(Str("abc").MakeBrackets(BCurly))
+	fPln(Str("abc").MakeBrackets(BCurly))
 }
 
 func TestRemoveBrackets(t *testing.T) {
-	pln(Str("<abc>").RemoveBrackets())
+	fPln(Str("<abc>").RemoveBrackets())
 }
 
 func TestBracketsPos(t *testing.T) {
@@ -117,7 +117,7 @@ func TestBracketsPos(t *testing.T) {
 		"objectType": "Group"
 	},`)
 
-	pln(s.BracketsPos(BCurly, 2, 3))
+	fPln(s.BracketsPos(BCurly, 2, 3))
 }
 
 func TestBracketPairCount(t *testing.T) {
@@ -142,8 +142,8 @@ func TestBracketPairCount(t *testing.T) {
 		}
 	]}`)
 
-	pln(s.BracketPairCount(BCurly))
-	pln(s.IsJSON())
+	fPln(s.BracketPairCount(BCurly))
+	fPln(s.IsJSON())
 }
 
 func TestIsXML(t *testing.T) {
@@ -158,5 +158,5 @@ func TestIsXML(t *testing.T) {
     </OtherIdList>    
 </StaffPersonal> `)
 
-	pln(s.IsXMLSegSimple())
+	fPln(s.IsXMLSegSimple())
 }

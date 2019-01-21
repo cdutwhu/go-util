@@ -4,23 +4,31 @@ import (
 	"encoding/json"
 )
 
-// QFlag : Flag for Quotes, single or double
-type QFlag int
-
-// BFlag : Flag for Brackets
-type BFlag int
-
-const (
-	QSingle QFlag = 1 // single quotes
-	QDouble QFlag = 2 // double quotes
+type (
+	// QFlag : Flag for Quotes, single or double
+	QFlag int
+	// BFlag : Flag for Brackets
+	BFlag int
 )
 
 const (
-	BRound  BFlag = 1 // round brackets
-	BBox    BFlag = 2 // box brackets
-	BSquare BFlag = 2 // square brackets
-	BCurly  BFlag = 3 // curly brackets
-	BAngle  BFlag = 4 // angle brackets
+	// QSingle : single quotes
+	QSingle QFlag = 1
+	// QDouble : double quotes
+	QDouble QFlag = 2
+)
+
+const (
+	// BRound : round brackets
+	BRound BFlag = 1
+	// BBox : box brackets
+	BBox BFlag = 2
+	// BSquare : square brackets
+	BSquare BFlag = 2
+	// BCurly : curly brackets
+	BCurly BFlag = 3
+	// BAngle : angle brackets
+	BAngle BFlag = 4
 )
 
 // Str is string 'class'
@@ -517,7 +525,7 @@ func (s Str) KeyValuePair(assign string, terminatorK, terminatorV rune, rmQuotes
 // LooseSearch2Chars :
 func (s Str) LooseSearch2Chars(aim string, ignore ...rune) (bool, int) {
 	if len(aim) != 2 {
-		pln("<aim> string should be 2 chars")
+		fPln("<aim> string should be 2 chars")
 		return false, -1
 	}
 	for p, c := range s.V() {
@@ -564,10 +572,10 @@ func (s Str) IsXMLSegSimple() bool {
 	tageStr, _, _ := s.BracketsPos(BAngle, 1, c)
 	tage := tageStr[2 : len(tageStr)-1]
 	tags := tagsStr[1 : 1+len(tage)]
-	// pln(tagsStr)
-	// pln(tageStr)
-	// pln(tags)
-	// pln(tage)
+	// fPln(tagsStr)
+	// fPln(tageStr)
+	// fPln(tags)
+	// fPln(tage)
 	return tags == tage &&
 		(tagsStr[len(tags)+1] == ' ' || tagsStr[len(tags)+1] == '>') &&
 		tagsStr[0] == '<' && tageStr[:2] == "</"
@@ -579,14 +587,14 @@ func (s Str) IsJSON() bool {
 	return json.Unmarshal([]byte(s.V()), &js) == nil
 }
 
-// AllAreIdentical : check all the input strings are identical
-func AllAreIdentical(arr ...string) bool {
-	if len(arr) > 1 {
-		for _, a := range arr {
-			if arr[0] != a {
-				return false
-			}
-		}
-	}
-	return true
-}
+// // AllAreIdentical : check all the input strings are identical
+// func AllAreIdentical(arr ...string) bool {
+// 	if len(arr) > 1 {
+// 		for _, a := range arr {
+// 			if arr[0] != a {
+// 				return false
+// 			}
+// 		}
+// 	}
+// 	return true
+// }
