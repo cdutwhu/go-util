@@ -2,6 +2,8 @@ package util
 
 import (
 	"encoding/json"
+
+	"github.com/google/uuid"
 )
 
 type (
@@ -581,6 +583,12 @@ func (s Str) IsXMLSegSimple() bool {
 func (s Str) IsJSON() bool {
 	var js json.RawMessage
 	return json.Unmarshal([]byte(s.V()), &js) == nil
+}
+
+// IsUUID :
+func (s Str) IsUUID() bool {
+	_, e := uuid.Parse(s.V())
+	return e == nil
 }
 
 // FieldsSeqContain :
