@@ -28,39 +28,39 @@ func TestCoverAnyKeyInMapSI(t *testing.T) {
 }
 
 func TestRemovePrefix(t *testing.T) {
-	fPln(Str("sif.abc").RemovePrefix("sif."))
+	fPln(Str("sif.abc").RmPrefix("sif."))
 }
 
 func TestRemoveSuffix(t *testing.T) {
-	fPln(Str("sif.abc").RemoveSuffix("abc"))
+	fPln(Str("sif.abc").RmSuffix("abc"))
 }
 
 func TestRemoveTailFromLast(t *testing.T) {
-	fPln(Str("a.sif.abc").RemoveTailFromLast("."))
+	fPln(Str("a.sif.abc").RmTailFromLast("."))
 }
 
 func TestRemoveBlankBefore(t *testing.T) {
-	fPln(Str(`a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankBefore("=", ":"))
+	fPln(Str(`a            :  m   c		=   b  e 	 :  	 f`).RmBlankBefore("=", ":"))
 }
 
 func TestRemoveBlankNBefore(t *testing.T) {
-	fPln(Str(`a a            :  m   c		:   b  e 	 :  	 f`).RemoveBlankNBefore(2, ":"))
+	fPln(Str(`a a            :  m   c		:   b  e 	 :  	 f`).RmBlankNBefore(2, ":"))
 }
 
 func TestRemoveBlankAfter(t *testing.T) {
-	fPln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankAfter("=", ":"))
+	fPln(Str(`a   :    t         c    =	b   e  		=		f`).RmBlankAfter("=", ":"))
 }
 
 func TestRemoveBlankNAfter(t *testing.T) {
-	fPln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RemoveBlankNAfter(0, ":"))
+	fPln(Str(`a a            :  m   c		=   b  e 	 :  	 f`).RmBlankNAfter(0, ":"))
 }
 
 func TestRemoveBlankNNear(t *testing.T) {
-	fPln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNNear(0, "="))
+	fPln(Str(`a   :    t         c    =	b   e  		=		f`).RmBlankNNear(0, "="))
 }
 
 func TestRemoveBlankNear(t *testing.T) {
-	fPln(Str(`a   :    t         c    =	b   e  		=		f`).RemoveBlankNear(":", "="))
+	fPln(Str(`a   :    t         c    =	b   e  		=		f`).RmBlankNear(":", "="))
 }
 
 func TestKeyValueMap(t *testing.T) {
@@ -75,19 +75,19 @@ func TestKeyValuePair(t *testing.T) {
 }
 
 func TestMakeQuotes(t *testing.T) {
-	fPln(Str("abc").MakeQuotes(QDouble))
+	fPln(Str("abc").MkQuotes(QDouble))
 }
 
 func TestRemoveQuotes(t *testing.T) {
-	fPln(Str("'abc'").RemoveQuotes())
+	fPln(Str("'abc'").RmQuotes())
 }
 
 func TestMakeBrackets(t *testing.T) {
-	fPln(Str("abc").MakeBrackets(BCurly))
+	fPln(Str("abc").MkBrackets(BCurly))
 }
 
 func TestRemoveBrackets(t *testing.T) {
-	fPln(Str("<abc>").RemoveBrackets())
+	fPln(Str("<abc>").RmBrackets())
 }
 
 func TestBracketsPos(t *testing.T) {

@@ -14,22 +14,22 @@ type (
 )
 
 const (
-	// QSingle : single quotes
+	// QSingle : single quotes ''
 	QSingle QFlag = 1
-	// QDouble : double quotes
+	// QDouble : double quotes ""
 	QDouble QFlag = 2
 )
 
 const (
-	// BRound : round brackets
+	// BRound : round brackets ()
 	BRound BFlag = 1
-	// BBox : box brackets
+	// BBox : box brackets []
 	BBox BFlag = 2
-	// BSquare : square brackets
+	// BSquare : square brackets []
 	BSquare BFlag = 2
-	// BCurly : curly brackets
+	// BCurly : curly brackets {}
 	BCurly BFlag = 3
-	// BAngle : angle brackets
+	// BAngle : angle brackets <>
 	BAngle BFlag = 4
 )
 
@@ -54,7 +54,7 @@ func (s Str) DefValue(def string) string {
 	return s.V()
 }
 
-// Repeat :
+// Repeat : e.g. "ABC"(2) => "ABCABC"
 func (s Str) Repeat(n int) (r string) {
 	for i := 0; i < n; i++ {
 		r += s.V()
@@ -62,7 +62,7 @@ func (s Str) Repeat(n int) (r string) {
 	return r
 }
 
-// HasAny :
+// HasAny : e.g. "ABC"('A', 'M') => true
 func (s Str) HasAny(cks ...rune) bool {
 	for _, c := range s.V() {
 		for _, ck := range cks {
@@ -74,7 +74,7 @@ func (s Str) HasAny(cks ...rune) bool {
 	return false
 }
 
-// IsMadeFrom :
+// IsMadeFrom : e.g. "ABC"('C','B','A','D') => true
 func (s Str) IsMadeFrom(chars ...rune) bool {
 NEXT:
 	for _, c := range s.V() {
@@ -138,8 +138,8 @@ func (s Str) CoverAnyKeyInMapSI(m map[string]int) (bool, int) {
 	return false, -1
 }
 
-// MakeBrackets :
-func (s Str) MakeBrackets(f BFlag) string {
+// MkBrackets : e.g. "ABC"(BRound) => "(ABC)"
+func (s Str) MkBrackets(f BFlag) string {
 	bracketL, bracketR := ' ', ' '
 	switch f {
 	case BRound:
@@ -161,8 +161,8 @@ func (s Str) MakeBrackets(f BFlag) string {
 	return string(bracketL) + s.V() + string(bracketR)
 }
 
-// RemoveBrackets :
-func (s Str) RemoveBrackets() string {
+// RmBrackets : e.g. "(ABC)" => "ABC"
+func (s Str) RmBrackets() string {
 	if (sHP(s.V(), "(") && sHS(s.V(), ")")) ||
 		(sHP(s.V(), "[") && sHS(s.V(), "]")) ||
 		(sHP(s.V(), "{") && sHS(s.V(), "}")) ||
@@ -251,8 +251,8 @@ func (s Str) BracketPairCount(f BFlag) (count int) {
 	return count
 }
 
-// MakeQuotes :
-func (s Str) MakeQuotes(f QFlag) string {
+// MkQuotes : e.g. "ABC"(QSingle) => "'ABC'"
+func (s Str) MkQuotes(f QFlag) string {
 	quote := ""
 	switch f {
 	case QSingle:
@@ -268,8 +268,8 @@ func (s Str) MakeQuotes(f QFlag) string {
 	return quote + s.V() + quote
 }
 
-// RemoveQuotes : Remove single or double Quotes from a string. If no quotations, do nothing
-func (s Str) RemoveQuotes() string {
+// RmQuotes : Remove single or double Quotes from a string. If no quotations, do nothing
+func (s Str) RmQuotes() string {
 	if (sHP(s.V(), "\"") && sHS(s.V(), "\"")) ||
 		(sHP(s.V(), "'") && sHS(s.V(), "'")) {
 		return s.V()[1 : len(s.V())-1]
@@ -277,48 +277,48 @@ func (s Str) RemoveQuotes() string {
 	return s.V()
 }
 
-// MakePrefix :
-func (s Str) MakePrefix(prefix string) string {
+// MkPrefix : e.g. "ABC"("abc") => "abcABC"
+func (s Str) MkPrefix(prefix string) string {
 	if !sHP(s.V(), prefix) {
 		return prefix + s.V()
 	}
 	return s.V()
 }
 
-// RemovePrefix :
-func (s Str) RemovePrefix(prefix string) string {
+// RmPrefix : e.g. "abcABC"("abc") => "ABC"
+func (s Str) RmPrefix(prefix string) string {
 	if sHP(s.V(), prefix) {
 		return s.V()[len(prefix):len(s.V())]
 	}
 	return s.V()
 }
 
-// MakeSuffix :
-func (s Str) MakeSuffix(suffix string) string {
+// MkSuffix : e.g. "ABC"("abc") => "ABCabc"
+func (s Str) MkSuffix(suffix string) string {
 	if !sHS(s.V(), suffix) {
 		return s.V() + suffix
 	}
 	return s.V()
 }
 
-// RemoveSuffix :
-func (s Str) RemoveSuffix(suffix string) string {
+// RmSuffix : e.g. "ABCabc"("abc") => "ABC"
+func (s Str) RmSuffix(suffix string) string {
 	if sHS(s.V(), suffix) {
 		return s.V()[:len(s.V())-len(suffix)]
 	}
 	return s.V()
 }
 
-// RemoveTailFromLast :
-func (s Str) RemoveTailFromLast(tail string) string {
+// RmTailFromLast : e.g. "AB.CD.EF"(".") => "AB.CD"
+func (s Str) RmTailFromLast(tail string) string {
 	if i := sLI(s.V(), tail); i >= 0 {
 		return s.V()[:i]
 	}
 	return s.V()
 }
 
-// RemoveBlankBefore :
-func (s Str) RemoveBlankBefore(strs ...string) string {
+// RmBlankBefore :
+func (s Str) RmBlankBefore(strs ...string) string {
 	whole := s.V()
 	for _, str := range strs {
 		str0, str1 := " "+str, "\t"+str
@@ -335,8 +335,8 @@ func (s Str) RemoveBlankBefore(strs ...string) string {
 	return whole
 }
 
-// RemoveBlankAfter :
-func (s Str) RemoveBlankAfter(strs ...string) string {
+// RmBlankAfter :
+func (s Str) RmBlankAfter(strs ...string) string {
 	whole := s.V()
 	for _, str := range strs {
 		str0, str1 := str+" ", str+"\t"
@@ -353,19 +353,19 @@ func (s Str) RemoveBlankAfter(strs ...string) string {
 	return whole
 }
 
-// RemoveBlankNear :
-func (s Str) RemoveBlankNear(strs ...string) string {
-	s0 := s.RemoveBlankBefore(strs...)
-	return Str(s0).RemoveBlankAfter(strs...)
+// RmBlankNear :
+func (s Str) RmBlankNear(strs ...string) string {
+	s0 := s.RmBlankBefore(strs...)
+	return Str(s0).RmBlankAfter(strs...)
 }
 
-// RemoveBlankNBefore :
-func (s Str) RemoveBlankNBefore(n int, str string) string {
+// RmBlankNBefore :
+func (s Str) RmBlankNBefore(n int, str string) string {
 	// whole, left, right, strs := s.V(), "", "", []string{}
 	// for i := 0; i < n; i++ {
 	// 	if p := sI(whole, str); p >= 0 {
 	// 		left, right = whole[:p+1], whole[p+1:]
-	// 		left, whole = Str(left).RemoveBlankBefore(str), right
+	// 		left, whole = Str(left).RmBlankBefore(str), right
 	// 		strs = append(strs, left)
 	// 		if i == n-1 {
 	// 			strs = append(strs, right)
@@ -389,8 +389,8 @@ func (s Str) RemoveBlankNBefore(n int, str string) string {
 	return sJ(strs, str)
 }
 
-// RemoveBlankNAfter :
-func (s Str) RemoveBlankNAfter(n int, str string) string {
+// RmBlankNAfter :
+func (s Str) RmBlankNAfter(n int, str string) string {
 	strs := []string{}
 	for i, seg := range sS(s.V(), str) {
 		if i >= 1 && i <= n {
@@ -401,10 +401,10 @@ func (s Str) RemoveBlankNAfter(n int, str string) string {
 	return sJ(strs, str)
 }
 
-// RemoveBlankNNear :
-func (s Str) RemoveBlankNNear(n int, str string) string {
-	// s0 := s.RemoveBlankNBefore(n, str)
-	// return Str(s0).RemoveBlankNAfter(n, str)
+// RmBlankNNear :
+func (s Str) RmBlankNNear(n int, str string) string {
+	// s0 := s.RmBlankNBefore(n, str)
+	// return Str(s0).RmBlankNAfter(n, str)
 
 	segs, strs := sS(s.V(), str), []string{}
 	for i, seg := range segs {
@@ -488,14 +488,14 @@ func (s Str) TrimInternalEachLine(cutset rune, nkeep int) (r string) {
 // KeyValueMap :
 func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
 	r = make(map[string]string)
-	str := s.RemoveBlankNear(string(assign))
+	str := s.RmBlankNear(string(assign))
 	if pt := sI(str, string(terminator)); pt > 0 {
 		str = str[:pt]
 	}
 	for _, kv := range sFF(str, func(c rune) bool { return c == delimiter }) {
 		if sC(kv, string(assign)) {
 			kvpair := sS(kv, string(assign))
-			r[kvpair[0]] = Str(kvpair[1]).RemoveQuotes()
+			r[kvpair[0]] = Str(kvpair[1]).RmQuotes()
 		}
 	}
 	return
@@ -503,7 +503,7 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 
 // KeyValuePair : (if assign mark cannot be found, k is empty, v is original string)
 func (s Str) KeyValuePair(assign string, terminatorK, terminatorV rune, rmQuotes, trimBlank bool) (k, v string) {
-	str := s.RemoveBlankNNear(1, assign)
+	str := s.RmBlankNNear(1, assign)
 	if p := sI(str, assign); p >= 0 {
 		k, v = str[:p], str[p+len(assign):]
 		if pk := sLI(k, string(terminatorK)); pk >= 0 {
@@ -519,7 +519,7 @@ func (s Str) KeyValuePair(assign string, terminatorK, terminatorV rune, rmQuotes
 		k, v = sT(k, " \t"), sT(v, " \t")
 	}
 	if rmQuotes {
-		k, v = Str(k).RemoveQuotes(), Str(v).RemoveQuotes()
+		k, v = Str(k).RmQuotes(), Str(v).RmQuotes()
 	}
 	return
 }
@@ -596,15 +596,3 @@ func (s Str) FieldsSeqContain(str, sep string) bool {
 	sArr0, sArr1 := sS(s.V(), sep), sS(str, sep)
 	return AS2AG(sArr0...).SeqContain(AS2AG(sArr1...))
 }
-
-// // AllAreIdentical : check all the input strings are identical
-// func AllAreIdentical(arr ...string) bool {
-// 	if len(arr) > 1 {
-// 		for _, a := range arr {
-// 			if arr[0] != a {
-// 				return false
-// 			}
-// 		}
-// 	}
-// 	return true
-// }
