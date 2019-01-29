@@ -20,4 +20,11 @@ var (
 
 	fPln = fmt.Println
 	fPf  = fmt.Printf
+	fEf  = fmt.Errorf
+
+	PC   = PanicOnCondition
+	PE   = PanicOnError
+	PE1  = PanicOnError1
+	PH   = PanicHandle
+	PHEx = PanicHandleEx
 )

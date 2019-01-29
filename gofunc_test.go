@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-var PC = PanicOnCondition
-
 func TestGoFunc(t *testing.T) {
 
 	start := time.Now()
