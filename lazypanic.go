@@ -81,6 +81,42 @@ func PanicOnError1(err error, estr string) {
 	}
 }
 
+// Must :
+func Must(r interface{}, err error) interface{} {
+	PanicOnError(err)
+	return r
+}
+
+// Must2 :
+func Must2(r1, r2 interface{}, err error) (_, _ interface{}) {
+	PanicOnError(err)
+	return r1, r2
+}
+
+// Must3 :
+func Must3(r1, r2, r3 interface{}, err error) (_, _, _ interface{}) {
+	PanicOnError(err)
+	return r1, r2, r3
+}
+
+// Must4 :
+func Must4(r1, r2, r3, r4 interface{}, err error) (_, _, _, _ interface{}) {
+	PanicOnError(err)
+	return r1, r2, r3, r4
+}
+
+// Must5 :
+func Must5(r1, r2, r3, r4, r5 interface{}, err error) (_, _, _, _, _ interface{}) {
+	PanicOnError(err)
+	return r1, r2, r3, r4, r5
+}
+
+// Must6 :
+func Must6(r1, r2, r3, r4, r5, r6 interface{}, err error) (_, _, _, _, _, _ interface{}) {
+	PanicOnError(err)
+	return r1, r2, r3, r4, r5, r6
+}
+
 // PanicOnCondition : launch a panic when the error condition comes true, input the error condition's error
 func PanicOnCondition(errCondition bool, err error) {
 	if errCondition {
