@@ -596,3 +596,13 @@ func (s Str) FieldsSeqContain(str, sep string) bool {
 	sArr0, sArr1 := sS(s.V(), sep), sS(str, sep)
 	return AS2AG(sArr0...).SeqContain(AS2AG(sArr1...))
 }
+
+// ToInt64 :
+func (s Str) ToInt64() int64 {
+	return Must(sc2Int(s.V(), 10, 64)).(int64)
+}
+
+// ToInt :
+func (s Str) ToInt() int {
+	return Must(sc2Int(s.V(), 10, 32)).(int)
+}

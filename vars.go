@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -21,6 +22,10 @@ var (
 	fPln = fmt.Println
 	fPf  = fmt.Printf
 	fEf  = fmt.Errorf
+	fSp  = fmt.Sprintf
+
+	sc2Int   = strconv.ParseInt
+	sc2Float = strconv.ParseFloat
 
 	PC   = PanicOnCondition
 	PE   = PanicOnError

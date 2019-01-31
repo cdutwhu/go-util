@@ -1,7 +1,7 @@
 package util
 
-// TerOper : Ternary Operator < ? : >
-func TerOper(condition bool, block1, block2 interface{}) interface{} {
+// TerOp : Ternary Operator LIKE < ? : >, BUT NO S/C, so block1 and block2 MUST all valid
+func TerOp(condition bool, block1, block2 interface{}) interface{} {
 	if condition {
 		return block1
 	}

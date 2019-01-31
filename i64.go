@@ -31,3 +31,8 @@ func (i I64) Nearest(arr ...int64) (int64, int) {
 	}
 	return arr[minIdx], minIdx
 }
+
+// ToStr :
+func (i I64) ToStr() string {
+	return fSp("%d", i.V())
+}
