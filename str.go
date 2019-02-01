@@ -604,5 +604,5 @@ func (s Str) ToInt64() int64 {
 
 // ToInt :
 func (s Str) ToInt() int {
-	return Must(sc2Int(s.V(), 10, 32)).(int)
+	return int(Must(sc2Int(s.V(), 10, 64)).(int64))
 }

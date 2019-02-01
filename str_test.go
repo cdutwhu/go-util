@@ -162,8 +162,8 @@ func TestIsXML(t *testing.T) {
 }
 
 func TestFieldsSeqContain(t *testing.T) {
-	s0 := Str("a + b + c + d")
-	fPln(s0.FieldsSeqContain("a + c + d", " + "))
+	s0 := Str("-RefId + LocalId + StateProvinceId + OtherIdList + PersonInfo + Title + EmploymentStatus + MostRecent")
+	fPln(s0.FieldsSeqContain("-RefId + LocalId + StateProvinceId + OtherIdList + PersonInfo + Title + EmploymentStatus + MostRecent", " + "))
 }
 
 func TestIsUUID(t *testing.T) {
