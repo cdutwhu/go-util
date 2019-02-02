@@ -594,7 +594,8 @@ func (s Str) IsUUID() bool {
 // FieldsSeqContain :
 func (s Str) FieldsSeqContain(str, sep string) bool {
 	sArr0, sArr1 := sS(s.V(), sep), sS(str, sep)
-	return AS2AG(sArr0...).SeqContain(AS2AG(sArr1...))
+	//return ToGA(sArr0...).SeqContain(ToGA(sArr1...))
+	return Strs(sArr0).ToG().SeqContain(Strs(sArr1).ToG())
 }
 
 // ToInt64 :

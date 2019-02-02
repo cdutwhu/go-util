@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"log"
 	"testing"
 	"time"
@@ -25,10 +24,10 @@ func TestGoFunc(t *testing.T) {
 func worker(done <-chan int, id int, args ...interface{}) {
 	p0 := args[0].([]int)[0]
 	p1, p2 := args[1], args[2]
-	fmt.Println("id:", id, " --- ", p0, p1, p2)
-	// fmt.Println(p0)
-	// fmt.Println(p1)
-	// fmt.Println(p2)
+	fPln("id:", id, " --- ", p0, p1, p2)
+	// fPln(p0)
+	// fPln(p1)
+	// fPln(p2)
 
 	time.Sleep(2 * time.Second)
 	<-done

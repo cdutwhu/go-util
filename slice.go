@@ -1,102 +1,67 @@
 package util
 
-// GArr : interface{} array
-type GArr []interface{}
+type (
+	GArr []interface{}
+	Strs []string
+	I32s []int
+	I64s []int64
+	F32s []float32
+	F64s []float64
+	C32s []rune
+)
 
-// // Search :
-// func Search(arr []interface{}, check func(each interface{}) bool) (interface{}, int, bool) {
-// 	for i, a := range arr {
-// 		if check(a) {
-// 			return a, i, true
-// 		}
-// 	}
-// 	return nil, -1, false
-// }
+func (ss Strs) ToG() (r GArr) {
+	for _, s := range ss {
+		r = append(r, s)
+	}
+	return
+}
 
-// InsertBefore :
-// func InsertBefore(arr *[]interface{}, item interface{}, check func(each interface{}) bool) (int, bool) {
-// 	for i, a := range *arr {
-// 		if check(a) {
-// 			*arr = append(*arr, 0)
-// 			copy((*arr)[i+1:], (*arr)[i:])
-// 			(*arr)[i] = item
-// 			return i, true
-// 		}
-// 	}
-// 	return -1, false
-// }
+func (is I32s) ToG() (r GArr) {
+	for _, i := range is {
+		r = append(r, i)
+	}
+	return
+}
 
-// // InsertAfter :
-// func InsertAfter(arr *[]interface{}, item interface{}, check func(each interface{}) bool) (int, bool) {
-// 	for i, a := range *arr {
-// 		if check(a) {
-// 			*arr = append(*arr, 0)
-// 			copy((*arr)[i+2:], (*arr)[i+1:])
-// 			(*arr)[i+1] = item
-// 			return i, true
-// 		}
-// 	}
-// 	return -1, false
-// }
+func (is I64s) ToG() (r GArr) {
+	for _, i := range is {
+		r = append(r, i)
+	}
+	return
+}
 
-// // Remove :
-// func Remove(arr *[]interface{}, check func(each interface{}) bool) (interface{}, int, bool) {
-// 	for i, a := range *arr {
-// 		if check(a) {
-// 			r := (*arr)[i]
-// 			copy((*arr)[i:], (*arr)[i+1:])
-// 			(*arr)[len(*arr)-1] = nil
-// 			(*arr) = (*arr)[:len(*arr)-1]
-// 			return r, i, true
-// 		}
-// 	}
-// 	return nil, -1, false
-// }
+func (fs F32s) ToG() (r GArr) {
+	for _, f := range fs {
+		r = append(r, f)
+	}
+	return
+}
 
-// MoveItemAfter :
-// func MoveItemAfter(arr *[]interface{}, check func(after, move interface{}) bool) (int, bool) {
-// 	for i, a0 := range *arr {
-// 		for _, a1 := range *arr {
-// 			if check(a0, a1) {
-// 				if deleted, _, ok := Remove(arr, func(each interface{}) bool { return each == a1 }); ok {
-// 					if _, ok = InsertAfter(arr, deleted, func(each interface{}) bool { return each == a0 }); ok {
-// 						return i, true
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return -1, false
-// }
+func (fs F64s) ToG() (r GArr) {
+	for _, f := range fs {
+		r = append(r, f)
+	}
+	return
+}
 
-// RemoveRep :
-// func RemoveRep(arr []interface{}) (result []interface{}) {
-// OUTER:
-// 	for i := range arr {
-// 		for j := range result {
-// 			if arr[i] == result[j] {
-// 				continue OUTER
-// 			}
-// 		}
-// 		result = append(result, arr[i])
-// 	}
-// 	return result
-// }
+func (cs C32s) ToG() (r GArr) {
+	for _, c := range cs {
+		r = append(r, c)
+	}
+	return
+}
 
-// func sg2ga(strs []string) (result []interface{}) {
-// 	for _, s := range strs {
-// 		result = append(result, s)
-// 	}
-// 	return
-// }
+/**********************************************************/
 
-// GA2SA : General Array to String Array
-// func ga2sa(arr []interface{}) (result []string) {
-// 	for _, a := range arr {
-// 		result = append(result, a.(string))
-// 	}
-// 	return
-// }
+func ToGA(arrs ...interface{}) (r GArr) {
+	for _, a := range arrs {
+		r = append(r, a)
+	}
+	return
+}
+
+/*******************************************************/
 
 // L : ga's length
 func (ga GArr) L() int {
@@ -135,6 +100,14 @@ func (ga GArr) InsertAfter(item interface{}, check func(idx int, each interface{
 		}
 	}
 	return
+}
+
+// Add :
+func (ga GArr) Add(add interface{}) (r []interface{}, idx int) {
+	for _, a := range ga {
+		r = append(r, a)
+	}
+	return append(r, add), ga.L()
 }
 
 // Remove :
@@ -240,20 +213,10 @@ func (ga GArr) ToInts() (r []int) {
 	return
 }
 
-/**********************************************************/
-
-// AS2AG : String Array to General Array Type
-func AS2AG(strs ...string) (r GArr) {
-	for _, s := range strs {
-		r = append(r, s)
-	}
-	return
-}
-
-// AI2AG : Int Array to General Array Type
-func AI2AG(ints ...int) (r GArr) {
-	for _, a := range ints {
-		r = append(r, a)
+// ToInt64s :
+func (ga GArr) ToInt64s() (r []int64) {
+	for _, a := range ga {
+		r = append(r, a.(int64))
 	}
 	return
 }
