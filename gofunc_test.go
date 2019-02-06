@@ -11,14 +11,14 @@ func TestGoFunc(t *testing.T) {
 	start := time.Now()
 	for i := 0; i < 20; i++ {
 		arr := []int{1, 2, 3}
-		GoFn("worker", 50, worker, arr, "1.01", "abc")
+		GoFn("worker", 50, true, worker, arr, "1.01", "abc")
 	}
 	for i := 0; i < 30; i++ {
 		arr := []int{1, 2, 3}
-		GoFn("worker1", 10, worker, arr, "2.02", "def")
+		GoFn("worker1", 10, true, worker, arr, "2.02", "def")
 	}
 	log.Println("complete", time.Since(start).Seconds())
-	time.Sleep(2 * time.Second)
+	time.Sleep(10 * time.Second)
 }
 
 func worker(done <-chan int, id int, args ...interface{}) {
