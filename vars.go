@@ -2,6 +2,8 @@ package util
 
 import (
 	"fmt"
+	"os"
+	"path"
 	"strconv"
 	"strings"
 )
@@ -33,8 +35,10 @@ var (
 	PE1 = PanicOnError1
 	PH  = PanicHandle
 	PHx = PanicHandleEx
+
+	defLog = path.Join(os.TempDir(), "/GoErrorLog.txt")
 )
 
 const (
-	FATALMARK = "#FATAL"
+	NOFATALMARK = "#NOFATAL#"
 )

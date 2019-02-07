@@ -3,15 +3,11 @@ package util
 import (
 	"log"
 	"os"
-	"path"
 	"strings"
 
 	"github.com/go-errors/errors"
 	errs "github.com/pkg/errors"
 )
-
-//
-var defLog = path.Join(os.TempDir(), "/GoErrorLog.txt")
 
 func getFileWithPrefix(filename, precontent string) (file *os.File) {
 	if f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666); err != nil {
@@ -33,9 +29,9 @@ func PanicHandle(p interface{}, logfile string) {
 func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interface{}), params ...interface{}) {
 	if p != nil {
 		err := fSp(p)
-		isFatal := TerOp(sC(err, FATALMARK), true, false).(bool)
+		isNoFatal := TerOp(sC(err, NOFATALMARK), true, false).(bool)
 
-		f := getFileWithPrefix(Str(logfile).DefValue(defLog), fSf("\n*** Panic Error *** Fatal : %t ***\n", isFatal))
+		f := getFileWithPrefix(Str(logfile).DefValue(defLog), fSf("\n*** Panic Error *** Fatal : %t ***\n", isNoFatal))
 		defer f.Close()
 		log.SetOutput(f)
 		log.Println(p)
@@ -43,7 +39,7 @@ func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interf
 			onPanic(err, params...)
 		}
 
-		if isFatal {
+		if !isNoFatal {
 			f.Close()
 			log.SetOutput(os.Stderr)
 			log.Fatalln(p)
