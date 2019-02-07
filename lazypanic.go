@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -24,22 +23,26 @@ func getFileWithPrefix(filename, precontent string) (file *os.File) {
 	return
 }
 
-// PanicHandle : simple calling for 'PanicHandleEx'
-func PanicHandle(p interface{}, logfile string, isFatal bool) {
-	PanicHandleEx(p, logfile, isFatal, nil, "")
+// PanicHandle : simple calling for 'PanicHandleEx', p is recover()
+func PanicHandle(p interface{}, logfile string) {
+	PanicHandleEx(p, logfile, nil)
 }
 
 // PanicHandleEx hooks a function for dealing a panic,
 // The 1st param of hook function is error-trace information.
-func PanicHandleEx(p interface{}, logfile string, isFatal bool, onPanic func(string, ...interface{}), params ...interface{}) {
+func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interface{}), params ...interface{}) {
 	if p != nil {
-		f := getFileWithPrefix(Str(logfile).DefValue(defLog), fmt.Sprintf("\n*** Panic Error *** Fatal : %t ***\n", isFatal))
+		err := fSp(p)
+		isFatal := TerOp(sC(err, FATALMARK), true, false).(bool)
+
+		f := getFileWithPrefix(Str(logfile).DefValue(defLog), fSf("\n*** Panic Error *** Fatal : %t ***\n", isFatal))
 		defer f.Close()
 		log.SetOutput(f)
 		log.Println(p)
 		if onPanic != nil {
-			onPanic(fmt.Sprint(p), params...)
+			onPanic(err, params...)
 		}
+
 		if isFatal {
 			f.Close()
 			log.SetOutput(os.Stderr)

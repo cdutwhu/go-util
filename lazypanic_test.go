@@ -13,4 +13,7 @@ func makeErr(a int, b string) (int, string, error) {
 func TestPanicOnError(t *testing.T) {
 	b, c := Must2(makeErr(100, "1we200"))
 	fPln(b, c)
+
+	defer func() { PH(recover(), "./log.txt") }()
+	PE(fEf("test#FATA"))
 }
