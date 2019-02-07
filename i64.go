@@ -34,5 +34,5 @@ func (i I64) Nearest(arr ...int64) (int64, int) {
 
 // ToStr :
 func (i I64) ToStr() string {
-	return fSp("%d", i.V())
+	return fSf("%d", i.V())
 }

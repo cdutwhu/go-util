@@ -48,5 +48,5 @@ func MinOf(vars ...int) int {
 
 // ToStr :
 func (i I32) ToStr() string {
-	return fSp("%d", i.V())
+	return fSf("%d", i.V())
 }
