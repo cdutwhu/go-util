@@ -172,7 +172,7 @@ func (s Str) RmBrackets() string {
 	return s.V()
 }
 
-// BracketsPos :
+// BracketsPos : level from 1, index from 1, if index > count, get the last one
 func (s Str) BracketsPos(f BFlag, level, index int) (str string, left, right int) {
 	bracketL, bracketR := ' ', ' '
 	switch f {

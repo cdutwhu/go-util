@@ -117,7 +117,7 @@ func TestBracketsPos(t *testing.T) {
 		"objectType": "Group"
 	},`)
 
-	fPln(s.BracketsPos(BCurly, 2, 3))
+	fPln(s.BracketsPos(BCurly, 2, 4))
 }
 
 func TestBracketPairCount(t *testing.T) {
