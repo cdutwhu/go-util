@@ -120,6 +120,35 @@ func TestBracketsPos(t *testing.T) {
 	fPln(s.BracketsPos(BCurly, 2, 4))
 }
 
+func TestJSONChildPos(t *testing.T) {
+	s := Str(`
+	"PersonInfo": {
+
+		"OtherNames": {
+				"Name": []
+		},
+		"Demographics": {},
+		"AddressList": {
+				"Address": []
+		},
+		"Name": {
+			"-Type": "LGL",
+			"FamilyName": "Smith",
+			"GivenName": "Fred",
+			"FullName": "Fred Smith"
+	},
+		"PhoneNumberList": {
+				"PhoneNumber": []
+		},
+		"EmailList": {
+				"Email": []
+		}
+}
+	`)
+	fPln(s.JSONChildPos("Name"))
+	// fPln(Str(s[s.JSONChildPos("Name"):]).BracketsPos(BCurly, 1, 1))
+}
+
 func TestBracketPairCount(t *testing.T) {
 	s := Str(`{"member": [
 		{

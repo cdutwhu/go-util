@@ -46,6 +46,16 @@ func (s Str) L() int {
 	return len(s.V())
 }
 
+// ToInt64 :
+func (s Str) ToInt64() int64 {
+	return Must(sc2Int(s.V(), 10, 64)).(int64)
+}
+
+// ToInt :
+func (s Str) ToInt() int {
+	return int(Must(sc2Int(s.V(), 10, 64)).(int64))
+}
+
 // DefValue : if s is blank, assign it with input string value, otherwise keep its current value
 func (s Str) DefValue(def string) string {
 	if len(s) == 0 {
@@ -598,12 +608,32 @@ func (s Str) FieldsSeqContain(str, sep string) bool {
 	return Strs(sArr0).ToG().SeqContain(Strs(sArr1).ToG())
 }
 
-// ToInt64 :
-func (s Str) ToInt64() int64 {
-	return Must(sc2Int(s.V(), 10, 64)).(int64)
+// JSONChildPos :
+func (s Str) JSONChildPos(child string) (pos int) {
+	if Str(s.MkBrackets(BCurly)).IsJSON() {
+		json, child := s.V(), Str(child).MkQuotes(QDouble)+":"
+	AGAIN:
+		if pos = sI(json, child); pos > 0 {
+			above := json[:pos]
+			if sCnt(above, "{")-sCnt(above, "}") == 1 { // *** FOUND ***
+				return pos
+			}
+			// *** FAKE FOUND ***
+			json = json[:pos] + "\"*" + json[pos+2:]
+			goto AGAIN
+		}
+		return 0
+	}
+	return -1
 }
 
-// ToInt :
-func (s Str) ToInt() int {
-	return int(Must(sc2Int(s.V(), 10, 64)).(int64))
-}
+// JSONParent : Str is JSON string, input a field name, return its parent field name
+// func (s Str) JSONParent(child string) (parent string) {
+// 	if s.IsJSON() {
+// 		child = Str(child).MkQuotes(QDouble) + ":"
+// 		if p := sI(s.V(), child); p > 0 {
+
+// 		}
+// 	}
+// 	return
+// }
