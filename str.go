@@ -165,6 +165,7 @@ func (s Str) MkBrackets(f BFlag) string {
 	default:
 		panic("error brackets flag")
 	}
+
 	if sHP(s.V(), string(bracketL)) && sHS(s.V(), string(bracketR)) {
 		return s.V()
 	}
@@ -180,6 +181,25 @@ func (s Str) RmBrackets() string {
 		return s.V()[1 : len(s.V())-1]
 	}
 	return s.V()
+}
+
+// QuotesPos : index from 1
+func (s Str) QuotesPos(f QFlag, index int) (str string, left, right int) {
+	quote := CaseAssign(f, QSingle, QDouble, '\'', '"').(rune)
+	cnt, left, right := 0, -1, -1
+	for i, c := range s.V() {
+		if left != -1 && right != -1 {
+			break
+		}
+		if c == quote {
+			cnt++
+		}
+		if (cnt+1)/2 == index {
+			left = TerOp(cnt%2 == 1 && left == -1, i, left).(int)
+			right = TerOp(cnt%2 == 0 && right == -1, i, right).(int)
+		}
+	}
+	return s.V()[left : right+1], left, right
 }
 
 // BracketsPos : level from 1, index from 1, if index > count, get the last one
@@ -608,23 +628,55 @@ func (s Str) FieldsSeqContain(str, sep string) bool {
 	return Strs(sArr0).ToG().SeqContain(Strs(sArr1).ToG())
 }
 
-// JSONChildPos :
-func (s Str) JSONChildPos(child string) (pos int) {
+// JSONChild : s has "{ }" wrapper.
+func (s Str) JSONChild(child string, idx ...int) (content string, pos int) {
+
 	if Str(s.MkBrackets(BCurly)).IsJSON() {
 		json, child := s.V(), Str(child).MkQuotes(QDouble)+":"
+
 	AGAIN:
-		if pos = sI(json, child); pos > 0 {
+		if pos = sI(json, child); pos > 0 { // *** General Found, including nested ***
 			above := json[:pos]
-			if sCnt(above, "{")-sCnt(above, "}") == 1 { // *** FOUND ***
-				return pos
+			if sCnt(above, "{")-sCnt(above, "}") == 1 { // *** FOUND ( Object OR Value ) ***
+
+				if ok, pchk := s[pos:].LooseSearch(":{", ' ', '\t', '\n'); ok && pchk == len(child)-1 { // *** (Object) ***
+					content, lb, _ := s[pos:].BracketsPos(BCurly, 1, 1)
+					return content, pos + lb
+				} else if ok, pchk := s[pos:].LooseSearch(":\"", ' ', '\t', '\n'); ok && pchk == len(child)-1 { // *** (Value) ***
+					pos += len(child)
+					content, lq, _ := s[pos:].QuotesPos(QDouble, 1)
+					return content, pos + lq
+				} else if ok, pchk := s[pos:].LooseSearch(":[", ' ', '\t', '\n'); ok && pchk == len(child)-1 { // *** (Array) ***
+					i := 1
+					if len(idx) > 0 {
+						i = idx[0]
+						fPln(i)
+					}
+					content, lb, _ := s[pos:].BracketsPos(BCurly, 1, i)
+					return content, pos + lb
+				}
 			}
 			// *** FAKE FOUND ***
 			json = json[:pos] + "\"*" + json[pos+2:]
 			goto AGAIN
 		}
-		return 0
+		return "", 0
 	}
-	return -1
+	fPln("invalid json")
+	return "", -1
+}
+
+// JSONXPath : s has "{ }" wrapper.
+func (s Str) JSONXPath(xpath, del string, idx ...int) (content string, pos int) {
+	posEach := 0
+	for _, seg := range sS(xpath, del) {
+		s = TerOp(content != "", Str(content), s).(Str)
+		content, posEach = s.JSONChild(seg, idx...)
+		// fPln(content)
+		// fPln("--------------------------")
+		pos += posEach
+	}
+	return
 }
 
 // JSONParent : Str is JSON string, input a field name, return its parent field name

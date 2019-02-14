@@ -91,62 +91,68 @@ func TestRemoveBrackets(t *testing.T) {
 }
 
 func TestBracketsPos(t *testing.T) {
-	s := Str(`	"actor": {
-		"name": "Team PB",
-		"mbox": "mailto:teampb@example.com",
-		"member": [
-			{
-				"name": "Andrew Downes",
-				"account": {
-					"homePage": "http://www.example.com",
-					"name": "13936749"
-				},
-				"objectType": "Agent"
-			},
-			{
-				"name": "Toby Nichols",
-				"openid": "http://toby.openid.example.org/",
-				"objectType": "Agent"
-			},
-			{
-				"name": "Ena Hills",
-				"mbox_sha1sum": "ebd31e95054c018b10727ccffd2ef2ec3a016ee9",
-				"objectType": "Agent"
-			}
-		],
-		"objectType": "Group"
-	},`)
-
-	fPln(s.BracketsPos(BCurly, 2, 4))
-}
-
-func TestJSONChildPos(t *testing.T) {
 	s := Str(`
-	"PersonInfo": {
+		"Name": [
+				{
+						"-Type": "AKA",
+						"FamilyName": "Anderson",
+						"GivenName": "Samuel",
+						"FullName": "Samuel Anderson"
+				},
+				{
+						"-Type": "PRF",
+						"FamilyName": "Rowinski",
+						"GivenName": "Sam",
+						"FullName": "Sam Rowinski "
+				}
+		]
+`)
 
-		"OtherNames": {
-				"Name": []
-		},
-		"Demographics": {},
-		"AddressList": {
-				"Address": []
-		},
-		"Name": {
-			"-Type": "LGL",
-			"FamilyName": "Smith",
-			"GivenName": "Fred",
-			"FullName": "Fred Smith"
-	},
-		"PhoneNumberList": {
-				"PhoneNumber": []
-		},
-		"EmailList": {
-				"Email": []
-		}
+	// fPln(s.QuotesPos(QDouble, 1))
+	fPln(s.BracketsPos(BCurly, 2, 1))
 }
-	`)
-	fPln(s.JSONChildPos("Name"))
-	// fPln(Str(s[s.JSONChildPos("Name"):]).BracketsPos(BCurly, 1, 1))
+
+func TestJSONChild(t *testing.T) {
+	s := Str(`{
+		"key": "value",
+    "StaffPersonal": {
+        "-RefId": "D3E34F41-9D75-101A-8C3D-00AA001A1655",
+        "LocalId": "946379881",
+        "StateProvinceId": "C2345681",
+        "OtherIdList": {
+            "OtherId": {
+                "-Type": "0004",
+                "#text": "333333333"
+            }
+        },
+        "PersonInfo": {
+            "Name": {
+                "-Type": "LGL",
+                "FamilyName": "Smith",
+                "GivenName": "Fred",
+                "FullName": "Fred Smith"
+            },
+            "OtherNames": {
+                "Name": [
+                    {
+                        "-Type": "AKA",
+                        "FamilyName": "Anderson",
+                        "GivenName": "Samuel",
+                        "FullName": "Samuel Anderson"
+                    },
+                    {
+                        "-Type": "PRF",
+                        "FamilyName": "Rowinski",
+                        "GivenName": "Sam",
+                        "FullName": "Sam Rowinski "
+                    }
+                ]
+            }
+        }
+    }
+}`)
+	fPln(s.JSONChild("key", 1))
+	// fPln(s.JSONXPath("StaffPersonal.PersonInfo.OtherNames.Name.FullName", ".", 1))
 }
 
 func TestBracketPairCount(t *testing.T) {
