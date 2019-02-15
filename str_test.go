@@ -93,66 +93,45 @@ func TestRemoveBrackets(t *testing.T) {
 func TestBracketsPos(t *testing.T) {
 	s := Str(`
 		"Name": [
-				{
-						"-Type": "AKA",
-						"FamilyName": "Anderson",
-						"GivenName": "Samuel",
-						"FullName": "Samuel Anderson"
-				},
-				{
-						"-Type": "PRF",
-						"FamilyName": "Rowinski",
-						"GivenName": "Sam",
-						"FullName": "Sam Rowinski "
-				}
+				
 		]
+	}
 `)
 
 	// fPln(s.QuotesPos(QDouble, 1))
-	fPln(s.BracketsPos(BCurly, 2, 1))
+	fPln(s.BracketsPos(BCurly, 1, 1))
 }
 
 func TestJSONChild(t *testing.T) {
 	s := Str(`{
-		"key": "value",
-    "StaffPersonal": {
-        "-RefId": "D3E34F41-9D75-101A-8C3D-00AA001A1655",
-        "LocalId": "946379881",
-        "StateProvinceId": "C2345681",
-        "OtherIdList": {
-            "OtherId": {
-                "-Type": "0004",
-                "#text": "333333333"
-            }
-        },
-        "PersonInfo": {
-            "Name": {
-                "-Type": "LGL",
-                "FamilyName": "Smith",
-                "GivenName": "Fred",
-                "FullName": "Fred Smith"
-            },
-            "OtherNames": {
-                "Name": [
-                    {
-                        "-Type": "AKA",
-                        "FamilyName": "Anderson",
-                        "GivenName": "Samuel",
-                        "FullName": "Samuel Anderson"
-                    },
-                    {
-                        "-Type": "PRF",
-                        "FamilyName": "Rowinski",
-                        "GivenName": "Sam",
-                        "FullName": "Sam Rowinski "
-                    }
-                ]
-            }
-        }
-    }
-}`)
-	fPln(s.JSONChild("key", 1))
-	// fPln(s.JSONXPath("StaffPersonal.PersonInfo.OtherNames.Name.FullName", ".", 1))
+		"Name": [  ]
+	}`)
+	fPln(s.JSONChild("Name", 2))
+	// fPln(s.JSONXPath("Name", ".", 2))
+}
+
+func TestJSONMake(t *testing.T) {
+	json, ok := Str("").JSONBuild("", "", 1, "StaffPersonal", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "-RefId", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "LocalId", "946379881")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "StateProvinceId", "C2345681")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "OtherIdList", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList", ".", 1, "OtherId", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList.OtherId", ".", 1, "-Type", "0004")
+	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList.OtherId", ".", 1, "#content", "333333333")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "PersonInfo", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo", ".", 1, "Name", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.Name", ".", 1, "-Type", "LGL")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo", ".", 1, "OtherNames", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.OtherNames", ".", 1, "Name", "[{},{}]") // ***
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.OtherNames.Name", ".", 1, "-Type", "AKA")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.OtherNames.Name", ".", 2, "-Type", "PRF")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo", ".", 1, "Demographics", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.Demographics", ".", 1, "CountriesOfCitizenship", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.Demographics.CountriesOfCitizenship", ".", 1, "CountryOfCitizenship", "[\"8104\", \"1101\"]")
+	// fPln(Str(json).JSONXPath("StaffPersonal.PersonInfo.OtherNames.Name", ".", 1))
+
+	fPln(json, ok)
 }
 
 func TestBracketPairCount(t *testing.T) {

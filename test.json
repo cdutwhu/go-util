@@ -1,36 +1,20 @@
 {
     "StaffPersonal": {
-        "-RefId": "D3E34F41-9D75-101A-8C3D-00AA001A1655",
+        "-RefId": {},
         "LocalId": "946379881",
         "StateProvinceId": "C2345681",
         "OtherIdList": {
             "OtherId": {
                 "-Type": "0004",
-                "#text": "333333333"
+                "#content": "333333333"
             }
         },
         "PersonInfo": {
             "Name": {
-                "-Type": "LGL",
-                "FamilyName": "Smith",
-                "GivenName": "Fred",
-                "FullName": "Fred Smith"
+                "-Type": "LGL"
             },
             "OtherNames": {
-                "Name": [
-                    {
-                        "-Type": "AKA",
-                        "FamilyName": "Anderson",
-                        "GivenName": "Samuel",
-                        "FullName": "Samuel Anderson"
-                    },
-                    {
-                        "-Type": "PRF",
-                        "FamilyName": "Rowinski",
-                        "GivenName": "Sam",
-                        "FullName": "Sam Rowinski "
-                    }
-                ]
+                "Name": []
             }
         }
     }

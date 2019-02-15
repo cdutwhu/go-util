@@ -624,11 +624,10 @@ func (s Str) IsUUID() bool {
 // FieldsSeqContain :
 func (s Str) FieldsSeqContain(str, sep string) bool {
 	sArr0, sArr1 := sS(s.V(), sep), sS(str, sep)
-	//return ToGA(sArr0...).SeqContain(ToGA(sArr1...))
 	return Strs(sArr0).ToG().SeqContain(Strs(sArr1).ToG())
 }
 
-// JSONChild : s has "{ }" wrapper.
+// JSONChild : s has "{ }" wrapper. idx from 1 and only one value
 func (s Str) JSONChild(child string, idx ...int) (content string, pos int) {
 
 	if Str(s.MkBrackets(BCurly)).IsJSON() {
@@ -652,7 +651,12 @@ func (s Str) JSONChild(child string, idx ...int) (content string, pos int) {
 						i = idx[0]
 						fPln(i)
 					}
-					content, lb, _ := s[pos:].BracketsPos(BCurly, 1, i)
+					content, lb, rb := s[pos:].BracketsPos(BCurly, 1, i)
+					// fPln(lb, rb)
+					if lb == 0 && rb == 0 {
+						content, lb, rb = s[pos:].BracketsPos(BBox, 1, 1)
+					}
+
 					return content, pos + lb
 				}
 			}
@@ -666,17 +670,52 @@ func (s Str) JSONChild(child string, idx ...int) (content string, pos int) {
 	return "", -1
 }
 
-// JSONXPath : s has "{ }" wrapper.
-func (s Str) JSONXPath(xpath, del string, idx ...int) (content string, pos int) {
-	posEach := 0
+// JSONXPath : s has "{ }" wrapper.  idx from 1 and only one value
+func (s Str) JSONXPath(xpath, del string, idx ...int) (content string, posStart, posEnd int) {
+	posEach, _ := 0, ""
 	for _, seg := range sS(xpath, del) {
 		s = TerOp(content != "", Str(content), s).(Str)
 		content, posEach = s.JSONChild(seg, idx...)
+		if posEach == -1 {
+			posStart, posEach = -1, -1
+			return
+		}
 		// fPln(content)
 		// fPln("--------------------------")
-		pos += posEach
+		posStart += posEach
+		// segLast = seg
 	}
+	// fPln(content, segLast)
+	
+	posEnd = posStart + len(content) - 1	
 	return
+}
+
+// JSONBuild :
+func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (string, bool) {
+	if sT(s.V(), " /t") == "" {
+		s = Str("{}")
+	}
+
+	property = Str(property).MkQuotes(QDouble) + ": "
+	if value[0] != '{' && value[0] != '[' {
+		value = Str(value).MkQuotes(QDouble)
+	}
+
+	if s == "{}" {
+		s = Str(fSf(`{%s %s}`, property, value))
+		return s.V(), s.IsJSON()
+	}
+
+	if _, start, end := s.JSONXPath(xpath, del, idx); start != -1 {
+		left, right := s.V()[:end], s.V()[end:]
+		if !sHS(left, "{") {
+			left += ","
+		}
+		json := left + " " + property + value + " " + right
+		return json, Str(json).IsJSON()
+	}
+	return "", false
 }
 
 // JSONParent : Str is JSON string, input a field name, return its parent field name
