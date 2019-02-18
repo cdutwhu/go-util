@@ -14,7 +14,22 @@
                 "-Type": "LGL"
             },
             "OtherNames": {
-                "Name": []
+                "Name": [
+                    {
+                        "-Type": "AKA"
+                    },
+                    {
+                        "-Type": "PRF"
+                    }
+                ]
+            },
+            "Demographics": {
+                "CountriesOfCitizenship": {
+                    "CountryOfCitizenship": [
+                        "8104",
+                        "1101"
+                    ]
+                }
             }
         }
     }

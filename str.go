@@ -649,7 +649,7 @@ func (s Str) JSONChild(child string, idx ...int) (content string, pos int) {
 					i := 1
 					if len(idx) > 0 {
 						i = idx[0]
-						fPln(i)
+						// fPln(i)
 					}
 					content, lb, rb := s[pos:].BracketsPos(BCurly, 1, i)
 					// fPln(lb, rb)
