@@ -149,26 +149,12 @@ func (s Str) CoverAnyKeyInMapSI(m map[string]int) (bool, int) {
 
 // MkBrackets : e.g. "ABC"(BRound) => "(ABC)"
 func (s Str) MkBrackets(f BFlag) string {
-	bracketL, bracketR := ' ', ' '
-	switch f {
-	case BRound:
-		bracketL, bracketR = '(', ')'
-	case BBox:
-		bracketL, bracketR = '[', ']'
-	// case BSquare:
-	// 	bracketL, bracketR = '[', ']'
-	case BCurly:
-		bracketL, bracketR = '{', '}'
-	case BAngle:
-		bracketL, bracketR = '<', '>'
-	default:
-		panic("error brackets flag")
-	}
-
-	if sHP(s.V(), string(bracketL)) && sHS(s.V(), string(bracketR)) {
+	bracketL := CaseAssign(f, BRound, BBox, BSquare, BCurly, BAngle, "(", "[", "[", "{", "<").(string)
+	bracketR := CaseAssign(f, BRound, BBox, BSquare, BCurly, BAngle, ")", "]", "]", "}", ">").(string)
+	if sHP(s.V(), bracketL) && sHS(s.V(), bracketR) {
 		return s.V()
 	}
-	return string(bracketL) + s.V() + string(bracketR)
+	return bracketL + s.V() + bracketR
 }
 
 // RmBrackets : e.g. "(ABC)" => "ABC"
@@ -203,21 +189,8 @@ func (s Str) QuotesPos(f QFlag, index int) (str string, left, right int) {
 
 // BracketsPos : level from 1, index from 1, if index > count, get the last one
 func (s Str) BracketsPos(f BFlag, level, index int) (str string, left, right int) {
-	bracketL, bracketR := ' ', ' '
-	switch f {
-	case BRound:
-		bracketL, bracketR = '(', ')'
-	case BBox:
-		bracketL, bracketR = '[', ']'
-	// case BSquare:
-	// 	bracketL, bracketR = '[', ']'
-	case BCurly:
-		bracketL, bracketR = '{', '}'
-	case BAngle:
-		bracketL, bracketR = '<', '>'
-	default:
-		panic("error brackets flag")
-	}
+	bracketL := CaseAssign(f, BRound, BBox, BSquare, BCurly, BAngle, '(', '[', '[', '{', '<').(rune)
+	bracketR := CaseAssign(f, BRound, BBox, BSquare, BCurly, BAngle, ')', ']', ']', '}', '>').(rune)
 
 	curLevel, curIndex := 0, 0
 	for i, c := range s.V() {
@@ -243,22 +216,8 @@ func (s Str) BracketsPos(f BFlag, level, index int) (str string, left, right int
 
 // BracketPairCount :
 func (s Str) BracketPairCount(f BFlag) (count int) {
-	bracketL, bracketR := ' ', ' '
-	switch f {
-	case BRound:
-		bracketL, bracketR = '(', ')'
-	case BBox:
-		bracketL, bracketR = '[', ']'
-	// case BSquare:
-	// 	bracketL, bracketR = '[', ']'
-	case BCurly:
-		bracketL, bracketR = '{', '}'
-	case BAngle:
-		bracketL, bracketR = '<', '>'
-	default:
-		panic("error brackets flag")
-	}
-
+	bracketL := CaseAssign(f, BRound, BBox, BSquare, BCurly, BAngle, '(', '[', '[', '{', '<').(rune)
+	bracketR := CaseAssign(f, BRound, BBox, BSquare, BCurly, BAngle, ')', ']', ']', '}', '>').(rune)
 	level, inflag := 0, false
 	for _, c := range s.V() {
 		if c == bracketL {
@@ -280,17 +239,31 @@ func (s Str) BracketPairCount(f BFlag) (count int) {
 	return count
 }
 
+// BracketDepth :
+func (s Str) BracketDepth(f BFlag, pos int) int {
+	if pos >= s.L() {
+		return -1
+	}
+	bracketL := CaseAssign(f, BRound, BBox, BSquare, BCurly, BAngle, '(', '[', '[', '{', '<').(rune)
+	bracketR := CaseAssign(f, BRound, BBox, BSquare, BCurly, BAngle, ')', ']', ']', '}', '>').(rune)
+	level := 0
+	for i, c := range s.V() {
+		if c == bracketL {
+			level++
+		}
+		if i == pos {
+			break
+		}
+		if c == bracketR {
+			level--
+		}
+	}
+	return level
+}
+
 // MkQuotes : e.g. "ABC"(QSingle) => "'ABC'"
 func (s Str) MkQuotes(f QFlag) string {
-	quote := ""
-	switch f {
-	case QSingle:
-		quote = "'"
-	case QDouble:
-		quote = "\""
-	default:
-		panic("error quotes flag")
-	}
+	quote := CaseAssign(f, QSingle, QDouble, "'", "\"").(string)
 	if sHP(s.V(), quote) && sHS(s.V(), quote) {
 		return s.V()
 	}
@@ -553,8 +526,8 @@ func (s Str) KeyValuePair(assign string, terminatorK, terminatorV rune, rmQuotes
 	return
 }
 
-// LooseSearch2Chars :
-func (s Str) LooseSearch2Chars(aim string, ignore ...rune) (bool, int) {
+// looseSearch2Chars :
+func (s Str) looseSearch2Chars(aim string, ignore ...rune) (bool, int) {
 	if len(aim) != 2 {
 		fPln("<aim> string should be 2 chars")
 		return false, -1
@@ -582,7 +555,7 @@ func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
 	findpos := -1
 	for i := 0; i < len(aim)-1; i++ {
 		sub2c := string(aim[i]) + string(aim[i+1])
-		find, pos := s.LooseSearch2Chars(sub2c, ignore...)
+		find, pos := s.looseSearch2Chars(sub2c, ignore...)
 		if i == 0 {
 			findpos = pos
 		}
@@ -591,6 +564,22 @@ func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
 		}
 	}
 	return true, findpos
+}
+
+// Indices :
+func (s Str) Indices(aim string) (posList []int) {
+	str := s.V()
+AGAIN:
+	if p := sI(str, aim); p >= 0 {
+		pos := p
+		if len(posList) > 0 {
+			pos = p + posList[len(posList)-1] + len(aim)
+		}
+		posList = append(posList, pos)
+		str = str[p+len(aim):]
+		goto AGAIN
+	}
+	return
 }
 
 // IsXMLSegSimple :
@@ -717,12 +706,14 @@ func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (stri
 	return "", false
 }
 
-// JSONRoot :
+// JSONRoot : The first json child
 func (s Str) JSONRoot() string {
 	if s.IsJSON() {
 		str := s.RmBrackets()
 		if p := sI(str, ":"); p > 0 {
-			return Str(sT(str[:p], " \t\n")).RmQuotes()
+			str = str[:p]
+			str = sT(str, " \t\n\r")
+			return Str(str).RmQuotes()
 		}
 	}
 	return ""
@@ -730,21 +721,20 @@ func (s Str) JSONRoot() string {
 
 // JSONChildren :
 func (s Str) JSONChildren(xpath, del string) (children []string) {
-
-	fPln(s.JSONChildValue(xpath))
-
-	panic("not implemented")
-
+	content, _, _ := s.JSONXPathValue(xpath, del)
+	fPln(content)
+	posList := []int{}
+	for _, p := range Str(content).Indices(`":`) {
+		if Str(content).BracketDepth(BCurly, p) == 1 {
+			posList = append(posList, p)
+		}
+	}
+	fPln(posList)
+	for _, pe := range posList {
+		str := content[:pe]
+		if ps := sLI(str, "\""); ps >= 0 {
+			children = append(children, str[ps+1:])
+		}
+	}
 	return
 }
-
-// JSONParent : Str is JSON string, input a field name, return its parent field name
-// func (s Str) JSONParent(child string) (parent string) {
-// 	if s.IsJSON() {
-// 		child = Str(child).MkQuotes(QDouble) + ":"
-// 		if p := sI(s.V(), child); p > 0 {
-
-// 		}
-// 	}
-// 	return
-// }

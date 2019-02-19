@@ -91,17 +91,23 @@ func TestRemoveBrackets(t *testing.T) {
 	fPln(Str("<abc>").RmBrackets())
 }
 
+func TestIndices(t *testing.T) {
+	fPln(Str(`abc77abc77abc77ccc77`).Indices("c77"))
+}
+
 func TestBracketsPos(t *testing.T) {
 	s := Str(`
 		"Name": [
-				
+				[ ]
 		]
 	}
 `)
 
 	// fPln(s.QuotesPos(QDouble, 1))
 	fPln(s.BracketsPos(BCurly, 1, 1))
+	fPln(s.BracketDepth(BBox, 24))
 }
+
 
 func TestJSONChild(t *testing.T) {
 	s := Str(`{
@@ -138,8 +144,8 @@ func TestJSONMake(t *testing.T) {
 func TestJSONRoot(t *testing.T) {
 	jsonbytes, _ := ioutil.ReadFile("./test.json")
 	json := string(jsonbytes)
-	root := Str(json).JSONRoot()
-	Str(json).JSONChildren(root, ".")
+	// root := Str(json).JSONRoot()
+	fPln(Str(json).JSONChildren("StaffPersonal.PersonInfo", "."))
 }
 
 func TestBracketPairCount(t *testing.T) {
