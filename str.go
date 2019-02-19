@@ -14,13 +14,12 @@ type (
 )
 
 const (
+
 	// QSingle : single quotes ''
 	QSingle QFlag = 1
 	// QDouble : double quotes ""
 	QDouble QFlag = 2
-)
 
-const (
 	// BRound : round brackets ()
 	BRound BFlag = 1
 	// BBox : box brackets []
@@ -627,8 +626,8 @@ func (s Str) FieldsSeqContain(str, sep string) bool {
 	return Strs(sArr0).ToG().SeqContain(Strs(sArr1).ToG())
 }
 
-// JSONChild : s has "{ }" wrapper. idx from 1 and only one value
-func (s Str) JSONChild(child string, idx ...int) (content string, pos int) {
+// JSONChildValue : s has "{ }" wrapper. idx from 1 and only one value
+func (s Str) JSONChildValue(child string, idx ...int) (content string, pos int) {
 
 	if Str(s.MkBrackets(BCurly)).IsJSON() {
 		json, child := s.V(), Str(child).MkQuotes(QDouble)+":"
@@ -670,12 +669,12 @@ func (s Str) JSONChild(child string, idx ...int) (content string, pos int) {
 	return "", -1
 }
 
-// JSONXPath : s has "{ }" wrapper.  idx from 1 and only one value
-func (s Str) JSONXPath(xpath, del string, idx ...int) (content string, posStart, posEnd int) {
+// JSONXPathValue : s has "{ }" wrapper.  idx from 1 and only one value
+func (s Str) JSONXPathValue(xpath, del string, idx ...int) (content string, posStart, posEnd int) {
 	posEach, _ := 0, ""
 	for _, seg := range sS(xpath, del) {
 		s = TerOp(content != "", Str(content), s).(Str)
-		content, posEach = s.JSONChild(seg, idx...)
+		content, posEach = s.JSONChildValue(seg, idx...)
 		if posEach == -1 {
 			posStart, posEach = -1, -1
 			return
@@ -686,8 +685,8 @@ func (s Str) JSONXPath(xpath, del string, idx ...int) (content string, posStart,
 		// segLast = seg
 	}
 	// fPln(content, segLast)
-	
-	posEnd = posStart + len(content) - 1	
+
+	posEnd = posStart + len(content) - 1
 	return
 }
 
@@ -707,7 +706,7 @@ func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (stri
 		return s.V(), s.IsJSON()
 	}
 
-	if _, start, end := s.JSONXPath(xpath, del, idx); start != -1 {
+	if _, start, end := s.JSONXPathValue(xpath, del, idx); start != -1 {
 		left, right := s.V()[:end], s.V()[end:]
 		if !sHS(left, "{") {
 			left += ","
@@ -716,6 +715,27 @@ func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (stri
 		return json, Str(json).IsJSON()
 	}
 	return "", false
+}
+
+// JSONRoot :
+func (s Str) JSONRoot() string {
+	if s.IsJSON() {
+		str := s.RmBrackets()
+		if p := sI(str, ":"); p > 0 {
+			return Str(sT(str[:p], " \t\n")).RmQuotes()
+		}
+	}
+	return ""
+}
+
+// JSONChildren :
+func (s Str) JSONChildren(xpath, del string) (children []string) {
+
+	fPln(s.JSONChildValue(xpath))
+
+	panic("not implemented")
+
+	return
 }
 
 // JSONParent : Str is JSON string, input a field name, return its parent field name

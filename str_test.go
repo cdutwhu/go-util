@@ -1,6 +1,7 @@
 package util
 
 import (
+	"io/ioutil"
 	"testing"
 )
 
@@ -106,7 +107,7 @@ func TestJSONChild(t *testing.T) {
 	s := Str(`{
 		"Name": [  ]
 	}`)
-	fPln(s.JSONChild("Name", 2))
+	fPln(s.JSONChildValue("Name", 2))
 	// fPln(s.JSONXPath("Name", ".", 2))
 }
 
@@ -132,6 +133,13 @@ func TestJSONMake(t *testing.T) {
 	// fPln(Str(json).JSONXPath("StaffPersonal.PersonInfo.OtherNames.Name", ".", 1))
 
 	fPln(json, ok)
+}
+
+func TestJSONRoot(t *testing.T) {
+	jsonbytes, _ := ioutil.ReadFile("./test.json")
+	json := string(jsonbytes)
+	root := Str(json).JSONRoot()
+	Str(json).JSONChildren(root, ".")
 }
 
 func TestBracketPairCount(t *testing.T) {
