@@ -122,6 +122,19 @@ func (ga GArr) Remove(check func(idx int, each interface{}) bool) (r []interface
 	return
 }
 
+// Replace :
+func (ga GArr) Replace(check func(idx int, each interface{}) (interface{}, bool)) (r []interface{}, del interface{}, idx int, did bool) {
+	idx = -1
+	for i, a := range ga {
+		r = append(r, a)
+		if newItem, ok := check(i, a); ok {
+			del, r, idx, did = a, r[:len(r)-1], i, true
+			r = append(r, newItem)
+		}
+	}
+	return
+}
+
 // MoveItemAfter :
 func (ga GArr) MoveItemAfter(checkMove func(move interface{}) bool, checkAfter func(after interface{}) bool) (r []interface{}, idxMove, idxAfter int, did bool) {
 	idxAfter, idxMove = -1, -1

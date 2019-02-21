@@ -35,6 +35,13 @@ func TestRemove(t *testing.T) {
 	fPln(r)
 }
 
+func TestReplace(t *testing.T) {
+	arr := ToGA(1, 2, 3, 4, 5)
+	arr, _ = arr.Add(600)
+	r, _, _, _ := arr.Replace(func(i int, a interface{}) (interface{}, bool) { return a.(int) + 1, a == 600 || i == 2 })
+	fPln(r)
+}
+
 func TestMoveItemAfter(t *testing.T) {
 	arr := ToGA(1, 2, 3, 4, 5, 100)
 	r, _, _, _ := arr.MoveItemAfter(

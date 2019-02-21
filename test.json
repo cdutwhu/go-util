@@ -16,7 +16,8 @@
             "OtherNames": {
                 "Name": [
                     {
-                        "-Type": "AKA"
+                        "-Type": "AKA",
+                        "FName": "test"
                     },
                     {
                         "-Type": "PRF"
@@ -26,8 +27,8 @@
             "Demographics": {
                 "CountriesOfCitizenship": {
                     "CountryOfCitizenship": [
-                        "8104",
-                        "1101"
+                        123,
+                        "sfe"                                         
                     ]
                 }
             }

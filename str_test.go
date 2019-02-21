@@ -105,9 +105,8 @@ func TestBracketsPos(t *testing.T) {
 
 	// fPln(s.QuotesPos(QDouble, 1))
 	fPln(s.BracketsPos(BCurly, 1, 1))
-	fPln(s.BracketDepth(BBox, 24))
+	fPln(s.BracketDepth(BBox, 23))
 }
-
 
 func TestJSONChild(t *testing.T) {
 	s := Str(`{
@@ -145,7 +144,16 @@ func TestJSONRoot(t *testing.T) {
 	jsonbytes, _ := ioutil.ReadFile("./test.json")
 	json := string(jsonbytes)
 	// root := Str(json).JSONRoot()
-	fPln(Str(json).JSONChildren("StaffPersonal.PersonInfo", "."))
+	// fPln(Str(json).JSONChildren("StaffPersonal", "."))
+
+	//mapFT := &map[string][]string{}
+	//Str(json).JSONFamilyTree("StaffPersonal", ".", mapFT)
+
+	mapAC := Str(json).JSONArrInfo("StaffPersonal", ".")
+	for k, v := range mapAC {
+		fPln(k, v)
+	}
+
 }
 
 func TestBracketPairCount(t *testing.T) {

@@ -722,19 +722,66 @@ func (s Str) JSONRoot() string {
 // JSONChildren :
 func (s Str) JSONChildren(xpath, del string) (children []string) {
 	content, _, _ := s.JSONXPathValue(xpath, del)
-	fPln(content)
+	// fPln(content)
+
 	posList := []int{}
 	for _, p := range Str(content).Indices(`":`) {
 		if Str(content).BracketDepth(BCurly, p) == 1 {
 			posList = append(posList, p)
 		}
 	}
-	fPln(posList)
+	// fPln(posList)
+
 	for _, pe := range posList {
 		str := content[:pe]
 		if ps := sLI(str, "\""); ps >= 0 {
 			children = append(children, str[ps+1:])
+
+			// *** search "[" for array, add prefix "[]" to array child ***
+			if sHP(sTL(content[pe+2:], " \t\n\r"), "[") {
+				children[len(children)-1] = "[]" + children[len(children)-1]
+			}
 		}
 	}
 	return
+}
+
+// JSONFamilyTree :
+func (s Str) JSONFamilyTree(xpath, del string, mapFT *map[string][]string) {
+	PC(mapFT == nil, fEf("FamilyTree map is not inited"))
+	children := s.JSONChildren(xpath, del)
+	fPln(xpath, children)
+	if len(children) > 0 {
+		(*mapFT)[xpath] = children
+		for _, child := range (*mapFT)[xpath] {
+			if sHP(child, "[]") {
+				child = child[2:]
+			}
+			s.JSONFamilyTree(xpath+del+child, del, mapFT)
+		}
+	}
+}
+
+// JSONArrInfo :
+func (s Str) JSONArrInfo(xpath, del string) map[string]int {
+	mapFT := &map[string][]string{}
+	s.JSONFamilyTree(xpath, del, mapFT)
+
+	mapAC := map[string]int{}
+	for k, v := range *mapFT {
+		if sHP(v[0], "[]") {
+			content, _, _ := s.JSONXPathValue(k, ".")
+			content = Str(content).RmBrackets()
+			n := Str(content).BracketPairCount(BCurly)
+			if n == 0 {
+				bbox, _, _ := Str(content).BracketsPos(BBox, 1, 1)
+				n = sCnt(bbox, ",") + 1
+				if sT(bbox, " \t\n\r[]") == "" {
+					n = 0
+				}
+			}
+			mapAC[k] = n
+		}
+	}
+	return mapAC
 }
