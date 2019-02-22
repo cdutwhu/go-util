@@ -28,7 +28,8 @@
                 "CountriesOfCitizenship": {
                     "CountryOfCitizenship": [
                         123,
-                        "sfe"                                         
+                        "sfe" ,
+                        456                                       
                     ]
                 }
             }
