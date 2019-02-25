@@ -130,7 +130,7 @@ func (s Str) InMapSSValues(m map[string]string) (bool, string) {
 // BeCoveredInMapSIKeys : check if at least one map(string)key value can cover the calling string
 func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
 	for k, v := range m {
-		if sC(k, s.V()) {
+		if sCtn(k, s.V()) {
 			return true, v
 		}
 	}
@@ -140,7 +140,7 @@ func (s Str) BeCoveredInMapSIKeys(m map[string]int) (bool, int) {
 // CoverAnyKeyInMapSI :
 func (s Str) CoverAnyKeyInMapSI(m map[string]int) (bool, int) {
 	for k, v := range m {
-		if sC(s.V(), k) {
+		if sCtn(s.V(), k) {
 			return true, v
 		}
 	}
@@ -381,7 +381,7 @@ func (s Str) RmBlankNBefore(n int, str string) string {
 	// }
 	// return sJ(strs, "")
 
-	segs, strs := sS(s.V(), str), []string{}
+	segs, strs := sSpl(s.V(), str), []string{}
 	for i, seg := range segs {
 		if i < n {
 			seg = sTR(seg, " \t")
@@ -394,7 +394,7 @@ func (s Str) RmBlankNBefore(n int, str string) string {
 // RmBlankNAfter :
 func (s Str) RmBlankNAfter(n int, str string) string {
 	strs := []string{}
-	for i, seg := range sS(s.V(), str) {
+	for i, seg := range sSpl(s.V(), str) {
 		if i >= 1 && i <= n {
 			seg = sTL(seg, " \t")
 		}
@@ -408,7 +408,7 @@ func (s Str) RmBlankNNear(n int, str string) string {
 	// s0 := s.RmBlankNBefore(n, str)
 	// return Str(s0).RmBlankNAfter(n, str)
 
-	segs, strs := sS(s.V(), str), []string{}
+	segs, strs := sSpl(s.V(), str), []string{}
 	for i, seg := range segs {
 		if i == 0 && i != n {
 			seg = sTR(seg, " \t")
@@ -487,6 +487,16 @@ func (s Str) TrimInternalEachLine(cutset rune, nkeep int) (r string) {
 	return sJ(strs, "")
 }
 
+// TrimAllInternal :
+func (s Str) TrimAllInternal(cutset string) (r string) {
+	cuts := []rune(cutset)
+	for _, c := range cuts {
+		r = s.TrimInternal(c, 0)
+		s = Str(r)
+	}
+	return
+}
+
 // KeyValueMap :
 func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
 	r = make(map[string]string)
@@ -495,8 +505,8 @@ func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]strin
 		str = str[:pt]
 	}
 	for _, kv := range sFF(str, func(c rune) bool { return c == delimiter }) {
-		if sC(kv, string(assign)) {
-			kvpair := sS(kv, string(assign))
+		if sCtn(kv, string(assign)) {
+			kvpair := sSpl(kv, string(assign))
 			r[kvpair[0]] = Str(kvpair[1]).RmQuotes()
 		}
 	}
@@ -611,6 +621,6 @@ func (s Str) IsUUID() bool {
 
 // FieldsSeqContain :
 func (s Str) FieldsSeqContain(str, sep string) bool {
-	sArr0, sArr1 := sS(s.V(), sep), sS(str, sep)
+	sArr0, sArr1 := sSpl(s.V(), sep), sSpl(str, sep)
 	return Strs(sArr0).ToG().SeqContain(Strs(sArr1).ToG())
 }

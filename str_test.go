@@ -14,7 +14,7 @@ func TestLooseSearch(t *testing.T) {
 
 func TestTrimInternal(t *testing.T) {
 	fPln(Str(`*****abc*******abCCC**
-***de***.**fc*c**d****`).TrimInternal('*', 1))
+***de***.**fc*c**d****`).TrimAllInternal("*.\n\r\t"))
 }
 
 func TestBeCoveredInMapSIKeys(t *testing.T) {

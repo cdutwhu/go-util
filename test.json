@@ -1,5 +1,5 @@
 {
-    "StaffPersonal": {      
+    "StaffPersonal": {
         "-RefId": {},
         "LocalId": "946379881",
         "StateProvinceId": "C2345681",
@@ -16,8 +16,7 @@
             "OtherNames": {
                 "Name": [
                     {
-                        "-Type": "AKA",
-                        "FName": "test"
+                        "-Type": "AKA"
                     },
                     {
                         "-Type": "PRF"
@@ -27,9 +26,8 @@
             "Demographics": {
                 "CountriesOfCitizenship": {
                     "CountryOfCitizenship": [
-                        123,
-                        "sfe" ,
-                        456                                       
+                        "8104",
+                        "1101"
                     ]
                 }
             }

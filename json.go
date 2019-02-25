@@ -1,6 +1,6 @@
 package util
 
-// JSONChildValue : s has "{ }" wrapper. idx from 1 and only one value
+// JSONChildValue : s has "{ }" wrapper. idx from 1 and only one value. If child is array, idx is ignored.
 func (s Str) JSONChildValue(child string, idx ...int) (content string, pos int) {
 
 	PC(!Str(s.MkBrackets(BCurly)).IsJSON(), fEf("Invalid JSON String"))
@@ -25,21 +25,60 @@ AGAIN:
 					// fPln(i)
 				}
 
-				if s[pos:].BracketPairCount(BCurly) == 0 { //             *** all plain value array ***
-					content, _, _ = s[pos:].BracketsPos(BBox, 1, 1)
-					content = sT(Str(content).RmBrackets(), " \t\n\r")
-					content = Str(content).TrimInternal(' ', 0)
-					content = Str(content).TrimInternal('\t', 0)
-					if content == "" { //                                 *** none element ***
-						return "", 0
-					}
-					ss := sS(content, ",")
-					i = TerOp(i > len(ss), len(ss), i).(int)
-					i = TerOp(i < 1, 1, i).(int)
-					return ss[i-1], pos + sI(s.V()[pos:], ss[i-1]) //     *** one or more elements ***
+				content, _, _ = s[pos:].BracketsPos(BBox, 1, 1)
+				content = sT(Str(content).RmBrackets(), " \t\n\r")
+				if Str(content).TrimAllInternal(" \t\r\n") == "" { //          *** empty element ***
+					return "", 0
 				}
 
-				content, lb, _ := s[pos:].BracketsPos(BCurly, 1, i) //    *** object array ***
+				nCurlyPair := s[pos:].BracketPairCount(BCurly)
+
+				if nCurlyPair == 0 { //                                        *** All plain values ***
+					ss := sSpl(content, ",")
+					i = TerOp(i > len(ss), len(ss), i).(int)
+					i = TerOp(i < 1, 1, i).(int)
+					v, posTrue := sT(ss[i-1], " \t\n\r"), 0
+					for _, p := range s[pos:].Indices(v) {
+						if sCnt(s.V()[pos:pos+p], ",") == i-1 {
+							posTrue = pos + p
+							break
+						}
+					}
+					return v, posTrue
+				}
+
+				for j := 1; j <= nCurlyPair; j++ {
+					idx := fSf("#%d", j)
+					contentObj, _, _ := Str(content).BracketsPos(BCurly, 1, j)
+					content = sRep(content, contentObj, idx, 1)
+				}
+
+				ss := sSpl(content, ",")
+				i = TerOp(i > len(ss), len(ss), i).(int)
+				i = TerOp(i < 1, 1, i).(int)
+				v, posTrue := sT(ss[i-1], " \t\n\r"), 0
+
+				if posList := s[pos:].Indices(v); len(posList) > 0 { //        *** for plain value ***
+					for _, p := range posList {
+						if sCnt(s.V()[pos:pos+p], ",") == i-1 {
+							posTrue = pos + p
+							break
+						}
+					}
+					return v, posTrue
+				}
+
+				//                                                             *** for #Obj value ***
+				iObj := 0
+				for iEachEle, eachEle := range ss {
+					if sHP(sT(eachEle, " \t\n\r"), "#") {
+						iObj++
+					}
+					if iEachEle+1 == i {
+						break
+					}
+				}
+				content, lb, _ := s[pos:].BracketsPos(BCurly, 1, iObj)
 				return content, pos + lb
 			}
 		}
@@ -54,20 +93,18 @@ AGAIN:
 // JSONXPathValue : s has "{ }" wrapper.  idx from 1 and only one value
 func (s Str) JSONXPathValue(xpath, del string, idx ...int) (content string, posStart, posEnd int) {
 	posEach, _ := 0, ""
-	for _, seg := range sS(xpath, del) {
+	for _, seg := range sSpl(xpath, del) {
 		s = TerOp(content != "", Str(content), s).(Str)
 		content, posEach = s.JSONChildValue(seg, idx...)
+		if content == "" {
+			return
+		}
 		if posEach == -1 {
 			posStart, posEach = -1, -1
 			return
 		}
-		// fPln(content)
-		// fPln("--------------------------")
 		posStart += posEach
-		// segLast = seg
 	}
-	// fPln(content, segLast)
-
 	posEnd = posStart + len(content) - 1
 	return
 }

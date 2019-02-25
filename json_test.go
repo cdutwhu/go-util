@@ -7,10 +7,19 @@ import (
 
 func TestJSONChild(t *testing.T) {
 	s := Str(`{ "data": {
-		"Name": [ 23, 45, "abc" ]
+		"Name": [ 23, 45,   23,  {"p1": "v1"},  "ab   c", {"p2":  "v2"},  "def" ]
 	}}`)
-	fPln(s.JSONChildValue("data", 3))
-	// fPln(s.JSONXPathValue("data.Name", ".", 3))
+	// s := Str(`{ 
+	// 	"Name": [ 23, 45,   23,  {"p1":   "v1"},  "ab   c", {"p2":  "v2"},  "def" ]
+	// }`)
+	fPln(s.JSONChildValue("Name", 4))
+	fPln(s.JSONXPathValue("data.Name", ".", 1))
+	fPln(s.JSONXPathValue("data.Name", ".", 2))
+	fPln(s.JSONXPathValue("data.Name", ".", 3))
+	fPln(s.JSONXPathValue("data.Name", ".", 4))
+	fPln(s.JSONXPathValue("data.Name", ".", 5))
+	fPln(s.JSONXPathValue("data.Name", ".", 6))
+	fPln(s.JSONXPathValue("data.Name", ".", 7))
 }
 
 func TestJSONMake(t *testing.T) {

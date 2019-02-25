@@ -29,7 +29,7 @@ func PanicHandle(p interface{}, logfile string) {
 func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interface{}), params ...interface{}) {
 	if p != nil {
 		err := fSp(p)
-		isNoFatal := TerOp(sC(err, NOFATALMARK), true, false).(bool)
+		isNoFatal := TerOp(sCtn(err, NOFATALMARK), true, false).(bool)
 
 		f := getFileWithPrefix(Str(logfile).DefValue(defLog), fSf("\n*** Panic Error *** Fatal : %t ***\n", isNoFatal))
 		defer f.Close()

@@ -11,16 +11,17 @@ import (
 var (
 	sHP  = strings.HasPrefix
 	sHS  = strings.HasSuffix
-	sC   = strings.Contains
+	sCtn = strings.Contains
 	sCnt = strings.Count
 	sI   = strings.Index
 	sLI  = strings.LastIndex
 	sJ   = strings.Join
-	sS   = strings.Split
+	sSpl = strings.Split
 	sT   = strings.Trim
 	sTL  = strings.TrimLeft
 	sTR  = strings.TrimRight
 	sFF  = strings.FieldsFunc
+	sRep = strings.Replace
 
 	fPln = fmt.Println
 	fPf  = fmt.Printf
