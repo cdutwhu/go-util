@@ -536,15 +536,44 @@ func (s Str) KeyValuePair(assign string, terminatorK, terminatorV rune, rmQuotes
 	return
 }
 
-// looseSearch2Chars :
-func (s Str) looseSearch2Chars(aim string, ignore ...rune) (bool, int) {
-	if len(aim) != 2 {
-		fPln("<aim> string should be 2 chars")
-		return false, -1
+// looseSearch2Strs :
+func (s Str) looseSearch2Strs(first, second string, ignore ...rune) (bool, int) {
+	fPosList, sPosList := s.Indices(first), s.Indices(second)
+	fEndPosList := []int{}
+	for _, fp := range fPosList {
+		fEndPosList = append(fEndPosList, fp+len(first))
 	}
+	for i, fpe := range fEndPosList {
+		for _, sp := range sPosList {
+			if fpe < sp {
+				if Str(s.V()[fpe+1 : sp]).IsMadeFrom(ignore...) {
+					return true, fPosList[i]
+				}
+			}
+		}
+	}
+	return false, -1
+}
+
+// LooseSearchStrs : last param is ignored runes string
+func (s Str) LooseSearchStrs(aims ...string) (ok bool, findpos int) {
+	PC(len(aims) < 3, fEf("At least 3 params, the last is ignored runes string"))
+	ignored, j := []rune(aims[len(aims)-1]), -1
+	for i := 0; i < len(aims)-2; i++ {
+		ok, j = s.looseSearch2Strs(aims[i], aims[i+1], ignored...)
+		findpos = TerOp(i == 0, j, findpos).(int)
+		if !ok {
+			return false, -1
+		}
+	}
+	return
+}
+
+// looseSearch2Chars :
+func (s Str) looseSearch2Chars(first, second rune, ignore ...rune) (bool, int) {
 	for p, c := range s.V() {
-		if c == rune(aim[0]) && p < s.L()-1 {
-			if pe := sI(s.V()[p+1:], string(aim[1])); pe >= 0 {
+		if c == first && p < s.L()-1 {
+			if pe := sI(s.V()[p+1:], string(second)); pe >= 0 {
 				if Str(s.V()[p+1 : p+1+pe]).IsMadeFrom(ignore...) {
 					return true, p
 				}
@@ -554,8 +583,8 @@ func (s Str) looseSearch2Chars(aim string, ignore ...rune) (bool, int) {
 	return false, -1
 }
 
-// LooseSearch :
-func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
+// LooseSearchChars :
+func (s Str) LooseSearchChars(aim string, ignore ...rune) (bool, int) {
 	if len(aim) == 1 {
 		if p := sI(s.V(), string(aim[0])); p >= 0 {
 			return true, p
@@ -564,11 +593,8 @@ func (s Str) LooseSearch(aim string, ignore ...rune) (bool, int) {
 	}
 	findpos := -1
 	for i := 0; i < len(aim)-1; i++ {
-		sub2c := string(aim[i]) + string(aim[i+1])
-		find, pos := s.looseSearch2Chars(sub2c, ignore...)
-		if i == 0 {
-			findpos = pos
-		}
+		find, pos := s.looseSearch2Chars(rune(aim[i]), rune(aim[i+1]), ignore...)
+		findpos = TerOp(i == 0, pos, findpos).(int)
 		if !find {
 			return false, -1
 		}

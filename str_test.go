@@ -8,8 +8,16 @@ func TestIsMadeFrom(t *testing.T) {
 	fPln(Str("abc").IsMadeFrom('a', 'b'))
 }
 
-func TestLooseSearch(t *testing.T) {
-	fPln(Str("ab C C		C 	* d	 e *.fc  * c			d").LooseSearch("Cde.", ' ', '\t', '*'))
+func TestLooseSearchChars(t *testing.T) {
+	fPln(Str("ab C C		C 	* d	 e *.fc  * c			d").LooseSearchChars("Cde.", ' ', '\t', '*'))
+	fPln(Str(`type StaffPersonal {
+		RefId: String
+		LocalId: String
+	}
+
+	 type   Recent   {
+		SchoolLocalId: String
+	}`).LooseSearchStrs("type", "Recent", "{", " \t*"))
 }
 
 func TestTrimInternal(t *testing.T) {

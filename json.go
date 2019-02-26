@@ -11,18 +11,17 @@ AGAIN:
 		above := json[:pos]
 		if sCnt(above, "{")-sCnt(above, "}") == 1 { // *** FOUND ( Object OR Value ) ***
 
-			if ok, pchk := s[pos:].LooseSearch(":{", ' ', '\t', '\n'); ok && pchk == len(child)-1 { //         *** (Object) ***
+			if ok, pchk := s[pos:].LooseSearchChars(":{", ' ', '\t', '\n'); ok && pchk == len(child)-1 { //         *** (Object) ***
 				content, lb, _ := s[pos:].BracketsPos(BCurly, 1, 1)
 				return content, pos + lb
-			} else if ok, pchk := s[pos:].LooseSearch(":\"", ' ', '\t', '\n'); ok && pchk == len(child)-1 { // *** (Value) ***
+			} else if ok, pchk := s[pos:].LooseSearchChars(":\"", ' ', '\t', '\n'); ok && pchk == len(child)-1 { // *** (Value) ***
 				pos += len(child)
 				content, lq, _ := s[pos:].QuotesPos(QDouble, 1)
 				return content, pos + lq
-			} else if ok, pchk := s[pos:].LooseSearch(":[", ' ', '\t', '\n'); ok && pchk == len(child)-1 { //  *** (Array) (SAME type in array) ***
+			} else if ok, pchk := s[pos:].LooseSearchChars(":[", ' ', '\t', '\n'); ok && pchk == len(child)-1 { //  *** (Array) (SAME type in array) ***
 				i := 1
 				if len(idx) > 0 {
-					i = idx[0]
-					// fPln(i)
+					i = idx[0]					
 				}
 
 				content, _, _ = s[pos:].BracketsPos(BBox, 1, 1)
@@ -111,7 +110,7 @@ func (s Str) JSONXPathValue(xpath, del string, idx ...int) (content string, posS
 
 // JSONBuild :
 func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (string, bool) {
-	if sT(s.V(), " /t") == "" {
+	if sT(s.V(), " \t") == "" {
 		s = Str("{}")
 	}
 
@@ -180,7 +179,7 @@ func (s Str) JSONChildren(xpath, del string) (children []string) {
 func (s Str) JSONFamilyTree(xpath, del string, mapFT *map[string][]string) {
 	PC(mapFT == nil, fEf("FamilyTree map is not inited"))
 	children := s.JSONChildren(xpath, del)
-	fPln(xpath, children)
+	// fPln(xpath, children)
 	if len(children) > 0 {
 		(*mapFT)[xpath] = children
 		for _, child := range (*mapFT)[xpath] {
@@ -193,11 +192,18 @@ func (s Str) JSONFamilyTree(xpath, del string, mapFT *map[string][]string) {
 }
 
 // JSONArrInfo :
-func (s Str) JSONArrInfo(xpath, del string) map[string]int {
+func (s Str) JSONArrInfo(xpath, del, id string) map[string]struct {
+	Count int
+	ID    string
+} {
 	mapFT := &map[string][]string{}
 	s.JSONFamilyTree(xpath, del, mapFT)
 
-	mapAC := map[string]int{}
+	mapAC := map[string]struct {
+		Count int
+		ID    string
+	}{}
+
 	for k, v := range *mapFT {
 		if sHP(v[0], "[]") {
 			content, _, _ := s.JSONXPathValue(k, ".")
@@ -210,8 +216,28 @@ func (s Str) JSONArrInfo(xpath, del string) map[string]int {
 					n = 0
 				}
 			}
-			mapAC[k] = n
+			mapAC[k] = struct {
+				Count int
+				ID    string
+			}{Count: n, ID: id}
 		}
 	}
 	return mapAC
+}
+
+// ******************************************************************************
+
+// GQLBuild :
+func (s Str) GQLBuild(typename, field, fieldtype string) (gql string) {
+	if ok, pos := s.LooseSearchStrs("type", typename, "{", " \t"); ok {		
+		_, _, r := s[pos:].BracketsPos(BCurly, 1, 1)
+		gql = s.V()[:pos+r]
+		tail := s.V()[pos+r+1:]
+		add := fSf("\t%s: %s\n}", field, fieldtype)
+		gql += add + tail
+	} else {
+		s += Str(fSf("\n\ntype %s {\n\t%s: %s\n}", typename, field, fieldtype))
+		gql = s.V()
+	}
+	return gql
 }

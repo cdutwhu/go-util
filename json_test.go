@@ -7,9 +7,9 @@ import (
 
 func TestJSONChild(t *testing.T) {
 	s := Str(`{ "data": {
-		"Name": [ 23, 45,   23,  {"p1": "v1"},  "ab   c", {"p2":  "v2"},  "def" ]
+		"Name": [ 23, 45,   23,  {"p1":   "v1"},  "ab   c", {"p2":     "v2"}   ,  "def" ]
 	}}`)
-	// s := Str(`{ 
+	// s := Str(`{
 	// 	"Name": [ 23, 45,   23,  {"p1":   "v1"},  "ab   c", {"p2":  "v2"},  "def" ]
 	// }`)
 	fPln(s.JSONChildValue("Name", 4))
@@ -52,14 +52,26 @@ func TestJSONRoot(t *testing.T) {
 	root := Str(json).JSONRoot()
 	fPln(root)
 
-	fPln(Str(json).JSONChildren("StaffPersonal", "."))
-
 	mapFT := &map[string][]string{}
 	Str(json).JSONFamilyTree("StaffPersonal", ".", mapFT)
-
-	mapAC := Str(json).JSONArrInfo("StaffPersonal", ".")
-	for k, v := range mapAC {
+	for k, v := range *mapFT {
 		fPln(k, v)
 	}
 
+	mapAC := Str(json).JSONArrInfo("StaffPersonal", ".", "1234567890")
+	for k, v := range mapAC {
+		fPln(k, v)
+	}
+}
+
+func TestGQLBuild(t *testing.T) {
+	s := Str("")
+	s = Str(s.GQLBuild("StaffPersonal", "RefId", "String"))	
+	s = Str(s.GQLBuild("StaffPersonal", "LocalId", "String"))	
+	s = Str(s.GQLBuild("Recent", "SchoolLocalId", "String"))	
+	s = Str(s.GQLBuild("Recent", "LocalCampusId", "String"))
+	s = Str(s.GQLBuild("StaffPersonal", "StateProvinceId", "String"))	
+	s = Str(s.GQLBuild("NAPLANClassListType", "ClassCode", "[String]"))	
+	s = Str(s.GQLBuild("StaffPersonal", "OtherIdList", "OtherIdList"))	
+	fPln(s)
 }
