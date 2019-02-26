@@ -21,7 +21,7 @@ AGAIN:
 			} else if ok, pchk := s[pos:].LooseSearchChars(":[", ' ', '\t', '\n'); ok && pchk == len(child)-1 { //  *** (Array) (SAME type in array) ***
 				i := 1
 				if len(idx) > 0 {
-					i = idx[0]					
+					i = idx[0]
 				}
 
 				content, _, _ = s[pos:].BracketsPos(BBox, 1, 1)
@@ -227,10 +227,13 @@ func (s Str) JSONArrInfo(xpath, del, id string) map[string]struct {
 
 // ******************************************************************************
 
-// GQLBuild :
+// GQLBuild : ignore identical field
 func (s Str) GQLBuild(typename, field, fieldtype string) (gql string) {
-	if ok, pos := s.LooseSearchStrs("type", typename, "{", " \t"); ok {		
-		_, _, r := s[pos:].BracketsPos(BCurly, 1, 1)
+	if ok, pos := s.LooseSearchStrs("type", typename, "{", " \t"); ok {
+		content, _, r := s[pos:].BracketsPos(BCurly, 1, 1)
+		if sCtn(content, field+":") {
+			return s.V()
+		}
 		gql = s.V()[:pos+r]
 		tail := s.V()[pos+r+1:]
 		add := fSf("\t%s: %s\n}", field, fieldtype)

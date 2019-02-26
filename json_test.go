@@ -47,21 +47,21 @@ func TestJSONMake(t *testing.T) {
 }
 
 func TestJSONRoot(t *testing.T) {
-	jsonbytes, _ := ioutil.ReadFile("./test.json")
+	jsonbytes, _ := ioutil.ReadFile("./test1.json")
 	json := string(jsonbytes)
 	root := Str(json).JSONRoot()
 	fPln(root)
 
 	mapFT := &map[string][]string{}
-	Str(json).JSONFamilyTree("StaffPersonal", ".", mapFT)
+	Str(json).JSONFamilyTree("problems", ".", mapFT)
 	for k, v := range *mapFT {
 		fPln(k, v)
 	}
 
-	mapAC := Str(json).JSONArrInfo("StaffPersonal", ".", "1234567890")
-	for k, v := range mapAC {
-		fPln(k, v)
-	}
+	// mapAC := Str(json).JSONArrInfo("StaffPersonal", ".", "1234567890")
+	// for k, v := range mapAC {
+	// 	fPln(k, v)
+	// }
 }
 
 func TestGQLBuild(t *testing.T) {
@@ -89,7 +89,7 @@ type OtherId {
 	-Type: String
 }`)
 
-	s = Str(s.GQLBuild("OtherId", "#content", "String"))
+	s = Str(s.GQLBuild("OtherIdList2", "OtherId2", "String"))
 
 	// s := Str("")
 	// s = Str(s.GQLBuild("StaffPersonal", "RefId", "String"))
