@@ -537,32 +537,47 @@ func (s Str) KeyValuePair(assign string, terminatorK, terminatorV rune, rmQuotes
 }
 
 // looseSearch2Strs :
-func (s Str) looseSearch2Strs(first, second string, ignore ...rune) (bool, int) {
+func (s Str) looseSearch2Strs(first, second string, ignore ...rune) (bool, int, int) {
 	fPosList, sPosList := s.Indices(first), s.Indices(second)
 	fEndPosList := []int{}
 	for _, fp := range fPosList {
 		fEndPosList = append(fEndPosList, fp+len(first))
 	}
 	for i, fpe := range fEndPosList {
-		for _, sp := range sPosList {
+		for j, sp := range sPosList {
 			if fpe < sp {
 				if Str(s.V()[fpe+1 : sp]).IsMadeFrom(ignore...) {
-					return true, fPosList[i]
+					return true, fPosList[i], sPosList[j]
 				}
 			}
 		}
 	}
-	return false, -1
+	return false, -1, -1
 }
 
 // LooseSearchStrs : last param is ignored runes string
 func (s Str) LooseSearchStrs(aims ...string) (ok bool, findpos int) {
 	PC(len(aims) < 3, fEf("At least 3 params, the last is ignored runes string"))
-	ignored, j := []rune(aims[len(aims)-1]), -1
+	ignored, fst, scd, offsets := []rune(aims[len(aims)-1]), -1, -1, []int{}
+
+AGAIN:
+	prevFst, prevScd := -1, -1
 	for i := 0; i < len(aims)-2; i++ {
-		ok, j = s.looseSearch2Strs(aims[i], aims[i+1], ignored...)
-		findpos = TerOp(i == 0, j, findpos).(int)
-		if !ok {
+		if ok, fst, scd = s.looseSearch2Strs(aims[i], aims[i+1], ignored...); ok {
+			if fst != prevScd && prevScd != -1 {
+				s = s[prevFst+1:]
+				offsets = append(offsets, prevFst+1)
+				goto AGAIN
+			}
+			if i == 0 {
+				offsum := 0
+				for _, offset := range offsets {
+					offsum += offset
+				}
+				findpos = fst + offsum
+			}
+			prevFst, prevScd = fst, scd
+		} else {
 			return false, -1
 		}
 	}
@@ -570,36 +585,51 @@ func (s Str) LooseSearchStrs(aims ...string) (ok bool, findpos int) {
 }
 
 // looseSearch2Chars :
-func (s Str) looseSearch2Chars(first, second rune, ignore ...rune) (bool, int) {
+func (s Str) looseSearch2Chars(first, second rune, ignore ...rune) (bool, int, int) {
 	for p, c := range s.V() {
 		if c == first && p < s.L()-1 {
 			if pe := sI(s.V()[p+1:], string(second)); pe >= 0 {
 				if Str(s.V()[p+1 : p+1+pe]).IsMadeFrom(ignore...) {
-					return true, p
+					return true, p, p + pe + 1
 				}
 			}
 		}
 	}
-	return false, -1
+	return false, -1, -1
 }
 
 // LooseSearchChars :
-func (s Str) LooseSearchChars(aim string, ignore ...rune) (bool, int) {
+func (s Str) LooseSearchChars(aim string, ignore ...rune) (ok bool, findpos int) {
 	if len(aim) == 1 {
 		if p := sI(s.V(), string(aim[0])); p >= 0 {
 			return true, p
 		}
 		return false, -1
 	}
-	findpos := -1
+
+	fst, scd, offsets := -1, -1, []int{}
+AGAIN:
+	prevFst, prevScd := -1, -1
 	for i := 0; i < len(aim)-1; i++ {
-		find, pos := s.looseSearch2Chars(rune(aim[i]), rune(aim[i+1]), ignore...)
-		findpos = TerOp(i == 0, pos, findpos).(int)
-		if !find {
+		if ok, fst, scd = s.looseSearch2Chars(rune(aim[i]), rune(aim[i+1]), ignore...); ok {
+			if fst != prevScd && prevScd != -1 {
+				s = s[prevFst+1:]
+				offsets = append(offsets, prevFst+1)
+				goto AGAIN
+			}
+			if i == 0 {
+				offsum := 0
+				for _, offset := range offsets {
+					offsum += offset
+				}
+				findpos = fst + offsum
+			}
+			prevFst, prevScd = fst, scd
+		} else {
 			return false, -1
 		}
 	}
-	return true, findpos
+	return
 }
 
 // Indices :
