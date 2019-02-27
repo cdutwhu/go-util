@@ -1,9 +1,14 @@
 package util
 
-// JSONChildValue : s has "{ }" wrapper. idx from 1 and only one value. If child is array, idx is ignored.
+// JSONChildValue : s has "{ }" wrapper. idx from 1 and only one value.
 func (s Str) JSONChildValue(child string, idx ...int) (content string, pos int) {
 
 	PC(!Str(s.MkBrackets(BCurly)).IsJSON(), fEf("Invalid JSON String"))
+
+	if child == "" {
+		content, pos = s.MkBrackets(BCurly), 0
+		return
+	}
 
 	json, child := s.V(), Str(child).MkQuotes(QDouble)+":"
 AGAIN:
@@ -137,15 +142,27 @@ func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (stri
 
 // JSONRoot : The first json child
 func (s Str) JSONRoot() string {
-	if s.IsJSON() {
-		str := s.RmBrackets()
-		if p := sI(str, ":"); p > 0 {
-			str = str[:p]
-			str = sT(str, " \t\n\r")
-			return Str(str).RmQuotes()
-		}
+	PC(!s.IsJSON(), fEf("Invalid JSON"))
+	str := s.RmBrackets()
+	if p := sI(str, ":"); p > 0 {
+		str = str[:p]
+		str = sT(str, " \t\n\r")
 	}
-	return ""
+	return Str(str).RmQuotes()
+}
+
+// JSONRootEx : if No root JSON, add "root", return the modified JSON. if root JSON, same as JSONRoot
+func (s Str) JSONRootEx() (root string, ext bool, extJSON string) {
+	PC(!s.IsJSON(), fEf("Invalid JSON"))
+	if children := s.JSONChildren("", "."); len(children) > 1 {
+		root, ext = "root", true
+		prefix := "{\n\t\"root\": "
+		suffix := "\n}"
+		extJSON = prefix + s.V() + suffix
+	} else {
+		root, ext, extJSON = s.JSONRoot(), false, ""
+	}
+	return
 }
 
 // JSONChildren :
