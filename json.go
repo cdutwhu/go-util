@@ -149,11 +149,11 @@ func (s Str) JSONRoot() string {
 }
 
 // JSONRootEx : if No root JSON, add "root", return the modified JSON. if root JSON, same as JSONRoot
-func (s Str) JSONRootEx() (root string, ext bool, extJSON string) {
+func (s Str) JSONRootEx(rootExt string) (root string, ext bool, extJSON string) {
 	PC(!s.IsJSON(), fEf("Invalid JSON"))
 	if children := s.JSONChildren("", "."); len(children) > 1 {
-		root, ext = "root", true
-		prefix := "{\n\t\"root\": "
+		root, ext = rootExt, true
+		prefix := "{\n\t\"" + rootExt + "\": "
 		suffix := "\n}"
 		extJSON = prefix + s.V() + suffix
 	} else {
