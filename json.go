@@ -202,7 +202,7 @@ func (s Str) JSONFamilyTree(xpath, del string, mapFT *map[string][]string) {
 	}
 }
 
-// JSONArrInfo :
+// JSONArrInfo : Only deal with same type element array
 func (s Str) JSONArrInfo(xpath, del, id string) map[string]struct {
 	Count int
 	ID    string
@@ -223,10 +223,7 @@ func (s Str) JSONArrInfo(xpath, del, id string) map[string]struct {
 				n := Str(content).BracketPairCount(BCurly)
 				if n == 0 {
 					bbox, _, _ := Str(content).BracketsPos(BBox, 1, 1)
-					n = sCnt(bbox, ",") + 1
-					if sT(bbox, " \t\n\r[]") == "" {
-						n = 0
-					}
+					n = TerOp(sT(bbox, " \t\n\r[]") == "", 0, sCnt(bbox, ",")+1).(int)
 				}
 				mapAC[k+del+e] = struct {
 					Count int

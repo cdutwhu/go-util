@@ -61,7 +61,7 @@ func TestJSONMake(t *testing.T) {
 }
 
 func TestJSONRoot(t *testing.T) {
-	jsonbytes, _ := ioutil.ReadFile("./test.json")
+	jsonbytes, _ := ioutil.ReadFile("./test1.json")
 	json := string(jsonbytes)
 	root, ext, newJSON := Str(json).JSONRootEx()
 	fPln(root)
