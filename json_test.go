@@ -69,16 +69,11 @@ func TestJSONRoot(t *testing.T) {
 		json = newJSON
 	}
 
-	mapFT := &map[string][]string{}
-	Str(json).JSONFamilyTree(root, " ~ ", mapFT)
+	mapFT, mapAC := Str(json).JSONArrInfo(root, " ~ ", "1234567890")
 	for k, v := range *mapFT {
 		fPln(k, v)
 	}
-
-	fPln()
-
-	mapAC := Str(json).JSONArrInfo(root, " ~ ", "1234567890")
-	for k, v := range mapAC {
+	for k, v := range *mapAC {
 		fPln(k, v)
 	}
 }

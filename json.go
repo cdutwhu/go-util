@@ -203,14 +203,14 @@ func (s Str) JSONFamilyTree(xpath, del string, mapFT *map[string][]string) {
 }
 
 // JSONArrInfo : Only deal with same type element array
-func (s Str) JSONArrInfo(xpath, del, id string) map[string]struct {
+func (s Str) JSONArrInfo(xpath, del, id string) (*map[string][]string, *map[string]struct {
 	Count int
 	ID    string
-} {
+}) {
 	mapFT := &map[string][]string{}
 	s.JSONFamilyTree(xpath, del, mapFT)
 
-	mapAC := map[string]struct {
+	mapAC := &map[string]struct {
 		Count int
 		ID    string
 	}{}
@@ -225,14 +225,14 @@ func (s Str) JSONArrInfo(xpath, del, id string) map[string]struct {
 					bbox, _, _ := Str(content).BracketsPos(BBox, 1, 1)
 					n = TerOp(sT(bbox, " \t\n\r[]") == "", 0, sCnt(bbox, ",")+1).(int)
 				}
-				mapAC[k+del+e] = struct {
+				(*mapAC)[k+del+e] = struct {
 					Count int
 					ID    string
 				}{Count: n, ID: id}
 			}
 		}
 	}
-	return mapAC
+	return mapFT, mapAC
 }
 
 // ******************************************************************************
