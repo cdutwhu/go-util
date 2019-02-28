@@ -6,31 +6,34 @@ import (
 )
 
 func TestJSONChild(t *testing.T) {
-	s := Str(`{ 
-		"data": {
-			"Name": [ 23, 45,   23,  {"p1":   "v1"},  "ab   c", {"p2":     "v2"}   ,  "def" ]
-		}
-	}`)
+	// s := Str(`{ 
+	// 	"data": {
+	// 		"Name": [ 23, 45,   23,  {"p1":   "v1"},  "ab   c", {"p2":     "v2"}   ,  "def" ]
+	// 	}
+	// }`)
 
-	root, ext, newJSON := s.JSONRootEx()
-	fPln(root, ext)
-	fPln(newJSON)
+	// root, ext, newJSON := s.JSONRootEx()
+	// fPln(root, ext)
+	// fPln(newJSON)
 	
 	//children := s.JSONChildren("", ".")
 	//fPln(children)
 
 
-	// s := Str(`{
-	// 	"Name": [ 23, 45,   23,  {"p1":   "v1"},  "ab   c", {"p2":  "v2"},  "def" ]
-	// }`)
-	// fPln(s.JSONChildValue("Name", 4))
-	// fPln(s.JSONXPathValue("data.Name", ".", 1))
-	// fPln(s.JSONXPathValue("data.Name", ".", 2))
-	// fPln(s.JSONXPathValue("data.Name", ".", 3))
-	// fPln(s.JSONXPathValue("data.Name", ".", 4))
-	// fPln(s.JSONXPathValue("data.Name", ".", 5))
-	// fPln(s.JSONXPathValue("data.Name", ".", 6))
-	// fPln(s.JSONXPathValue("data.Name", ".", 7))
+	s := Str(`{
+		"Name2": [ 1, 2,   3,  "ooo" ],
+		"Name": [ 23, 45,   23,  {"p1":   "v1"},  "ab   c", {"p2":  "v2"},  "def" ],
+		"Name1": [ 1, 2,   3,  {"p3":   "v3" },  "yy   c", {"p4":  "v4"},  "ttt" ],
+		"Name3": [ 9, 8,  7,  "666" ]
+	}`)
+	fPln(s.JSONChildValue("Name", 4))
+	fPln(s.JSONXPathValue("Name", "."))
+	fPln(s.JSONXPathValue("Name", ".", 5))
+	fPln(s.JSONXPathValue("Name", ".", 1))
+	fPln(s.JSONXPathValue("Name", ".", 3))
+	fPln(s.JSONXPathValue("Name2", ".", 4))
+	fPln(s.JSONXPathValue("Name", ".", 6))
+	fPln(s.JSONXPathValue("Name3", ".", 4))
 }
 
 func TestJSONMake(t *testing.T) {
@@ -58,21 +61,26 @@ func TestJSONMake(t *testing.T) {
 }
 
 func TestJSONRoot(t *testing.T) {
-	jsonbytes, _ := ioutil.ReadFile("./test1.json")
+	jsonbytes, _ := ioutil.ReadFile("./test.json")
 	json := string(jsonbytes)
-	root := Str(json).JSONRoot()
+	root, ext, newJSON := Str(json).JSONRootEx()
 	fPln(root)
+	if ext {
+		json = newJSON
+	}
 
 	mapFT := &map[string][]string{}
-	Str(json).JSONFamilyTree("problems", ".", mapFT)
+	Str(json).JSONFamilyTree(root, " ~ ", mapFT)
 	for k, v := range *mapFT {
 		fPln(k, v)
 	}
 
-	// mapAC := Str(json).JSONArrInfo("StaffPersonal", ".", "1234567890")
-	// for k, v := range mapAC {
-	// 	fPln(k, v)
-	// }
+	fPln()
+
+	mapAC := Str(json).JSONArrInfo(root, " ~ ", "1234567890")
+	for k, v := range mapAC {
+		fPln(k, v)
+	}
 }
 
 func TestGQLBuild(t *testing.T) {

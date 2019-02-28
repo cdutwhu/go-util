@@ -1,8 +1,6 @@
 package util
 
 import (
-	"encoding/json"
-
 	"github.com/google/uuid"
 )
 
@@ -598,8 +596,8 @@ func (s Str) looseSearch2Chars(first, second rune, ignore ...rune) (bool, int, i
 	return false, -1, -1
 }
 
-// LooseSearchChars :
-func (s Str) LooseSearchChars(aim string, ignore ...rune) (ok bool, findpos int) {
+// looseSearchChars :
+func (s Str) looseSearchChars(aim string, ignore ...rune) (ok bool, findpos int) {
 	if len(aim) == 1 {
 		if p := sI(s.V(), string(aim[0])); p >= 0 {
 			return true, p
@@ -632,6 +630,11 @@ AGAIN:
 	return
 }
 
+// LooseSearchChars :
+func (s Str) LooseSearchChars(aim, ignorechars string) (ok bool, findpos int) {
+	return s.looseSearchChars(aim, []rune(ignorechars)...)
+}
+
 // Indices :
 func (s Str) Indices(aim string) (posList []int) {
 	str := s.V()
@@ -661,12 +664,6 @@ func (s Str) IsXMLSegSimple() bool {
 	return tags == tage &&
 		(tagsStr[len(tags)+1] == ' ' || tagsStr[len(tags)+1] == '>') &&
 		tagsStr[0] == '<' && tageStr[:2] == "</"
-}
-
-// IsJSON :
-func (s Str) IsJSON() bool {
-	var js json.RawMessage
-	return json.Unmarshal([]byte(s.V()), &js) == nil
 }
 
 // IsUUID :

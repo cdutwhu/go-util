@@ -9,7 +9,7 @@ func TestIsMadeFrom(t *testing.T) {
 }
 
 func TestLooseSearchChars(t *testing.T) {
-	fPln(Str("ab C C	de	C 	* d	 e *#.fc  * c			d").LooseSearchChars("Cde.", ' ', '\t', '*', '#'))
+	fPln(Str("ab C C	de	C 	* d	 e *#  .fc  * c			d").LooseSearchChars("Cde.", " \t*#"))
 	fPln(Str(`type StaffPersonal {
 		RefId: String
 		LocalId: String

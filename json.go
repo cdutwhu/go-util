@@ -1,13 +1,22 @@
 package util
 
+import "encoding/json"
+
+// IsJSON :
+func (s Str) IsJSON() bool {
+	var js json.RawMessage
+	return json.Unmarshal([]byte(s.V()), &js) == nil
+}
+
 // JSONChildValue : s has "{ }" wrapper. idx from 1 and only one value.
 func (s Str) JSONChildValue(child string, idx ...int) (content string, pos int) {
 
-	PC(!Str(s.MkBrackets(BCurly)).IsJSON(), fEf("Invalid JSON String"))
+	if !sHP(s.V(), "[") && !sHS(s.V(), "]") {
+		PC(!Str(s.MkBrackets(BCurly)).IsJSON(), fEf("Invalid JSON String"))
+	}
 
-	if child == "" {
-		content, pos = s.MkBrackets(BCurly), 0
-		return
+	if child == "" { //                    *** empty child return whole json string ***
+		return s.MkBrackets(BCurly), 0
 	}
 
 	json, child := s.V(), Str(child).MkQuotes(QDouble)+":"
@@ -16,73 +25,61 @@ AGAIN:
 		above := json[:pos]
 		if sCnt(above, "{")-sCnt(above, "}") == 1 { // *** FOUND ( Object OR Value ) ***
 
-			if ok, pchk := s[pos:].LooseSearchChars(":{", ' ', '\t', '\n'); ok && pchk == len(child)-1 { //         *** (Object) ***
+			if ok, pchk := s[pos:].LooseSearchChars(":{", " \t\n\r"); ok && pchk == len(child)-1 { //         *** (Object) ***
 				content, lb, _ := s[pos:].BracketsPos(BCurly, 1, 1)
 				return content, pos + lb
-			} else if ok, pchk := s[pos:].LooseSearchChars(":\"", ' ', '\t', '\n'); ok && pchk == len(child)-1 { // *** (Value) ***
+			} else if ok, pchk := s[pos:].LooseSearchChars(":\"", " \t\n\r"); ok && pchk == len(child)-1 { // *** (Value) ***
 				pos += len(child)
 				content, lq, _ := s[pos:].QuotesPos(QDouble, 1)
 				return content, pos + lq
-			} else if ok, pchk := s[pos:].LooseSearchChars(":[", ' ', '\t', '\n'); ok && pchk == len(child)-1 { //  *** (Array) (SAME type in array) ***
+			} else if ok, pchk := s[pos:].LooseSearchChars(":[", " \t\n\r"); ok && pchk == len(child)-1 { //  *** (Array) (SAME type in array) ***
+
+				content, lb, rb := s[pos:].BracketsPos(BBox, 1, 1)
+				if len(idx) == 0 { //                                  *** no idx, return all array '[ *** ]' ***
+					return content, pos + lb
+				}
+
+				content = sT(Str(content).RmBrackets(), " \t\n\r")
+				if Str(content).TrimAllInternal(" \t\r\n") == "" { //  *** empty array '[]' ***
+					return "[]", 0
+				}
+
 				i := 1
 				if len(idx) > 0 {
 					i = idx[0]
 				}
 
-				content, _, _ = s[pos:].BracketsPos(BBox, 1, 1)
-				content = sT(Str(content).RmBrackets(), " \t\n\r")
-				if Str(content).TrimAllInternal(" \t\r\n") == "" { //          *** empty element ***
-					return "", 0
-				}
+				segment := s[pos : pos+rb+1] //                        *** specific part what we want to deal with ***
 
-				nCurlyPair := s[pos:].BracketPairCount(BCurly)
-
-				if nCurlyPair == 0 { //                                        *** All plain values ***
-					ss := sSpl(content, ",")
-					i = TerOp(i > len(ss), len(ss), i).(int)
-					i = TerOp(i < 1, 1, i).(int)
-					v, posTrue := sT(ss[i-1], " \t\n\r"), 0
-					for _, p := range s[pos:].Indices(v) {
-						if sCnt(s.V()[pos:pos+p], ",") == i-1 {
-							posTrue = pos + p
-							break
-						}
-					}
-					return v, posTrue
-				}
-
-				for j := 1; j <= nCurlyPair; j++ {
-					idx := fSf("#%d", j)
+				for j := 1; j <= segment.BracketPairCount(BCurly); j++ {
 					contentObj, _, _ := Str(content).BracketsPos(BCurly, 1, j)
-					content = sRep(content, contentObj, idx, 1)
+					content = sRep(content, contentObj, fSf("##%d", j), 1)
 				}
 
 				ss := sSpl(content, ",")
 				i = TerOp(i > len(ss), len(ss), i).(int)
 				i = TerOp(i < 1, 1, i).(int)
-				v, posTrue := sT(ss[i-1], " \t\n\r"), 0
+				v := sT(ss[i-1], " \t\n\r")
 
-				if posList := s[pos:].Indices(v); len(posList) > 0 { //        *** for plain value ***
-					for _, p := range posList {
-						if sCnt(s.V()[pos:pos+p], ",") == i-1 {
-							posTrue = pos + p
-							break
+				for _, p := range segment.Indices(v) {
+					if sCnt(segment.V()[:p+1], ",") == i-1 {
+						if !sHP(v, "##") { //        			*** plain value, position ***
+							return v, pos + p
 						}
 					}
-					return v, posTrue
 				}
 
-				//                                                             *** for #Obj value ***
+				//                                              *** ##Obj value ***
 				iObj := 0
 				for iEachEle, eachEle := range ss {
-					if sHP(sT(eachEle, " \t\n\r"), "#") {
+					if sHP(sT(eachEle, " \t\n\r"), "##") {
 						iObj++
 					}
-					if iEachEle+1 == i {
+					if iEachEle == i-1 {
 						break
 					}
 				}
-				content, lb, _ := s[pos:].BracketsPos(BCurly, 1, iObj)
+				content, lb, _ = segment.BracketsPos(BCurly, 1, iObj)
 				return content, pos + lb
 			}
 		}
@@ -168,15 +165,12 @@ func (s Str) JSONRootEx() (root string, ext bool, extJSON string) {
 // JSONChildren :
 func (s Str) JSONChildren(xpath, del string) (children []string) {
 	content, _, _ := s.JSONXPathValue(xpath, del)
-	// fPln(content)
-
 	posList := []int{}
 	for _, p := range Str(content).Indices(`":`) {
 		if Str(content).BracketDepth(BCurly, p) == 1 {
 			posList = append(posList, p)
 		}
 	}
-	// fPln(posList)
 
 	for _, pe := range posList {
 		str := content[:pe]
@@ -195,15 +189,15 @@ func (s Str) JSONChildren(xpath, del string) (children []string) {
 // JSONFamilyTree :
 func (s Str) JSONFamilyTree(xpath, del string, mapFT *map[string][]string) {
 	PC(mapFT == nil, fEf("FamilyTree map is not inited"))
-	children := s.JSONChildren(xpath, del)
-	// fPln(xpath, children)
-	if len(children) > 0 {
+
+	if children := s.JSONChildren(xpath, del); len(children) > 0 {
+		// fPln(xpath, children)
 		(*mapFT)[xpath] = children
 		for _, child := range (*mapFT)[xpath] {
 			if sHP(child, "[]") {
 				child = child[2:]
 			}
-			s.JSONFamilyTree(xpath+del+child, del, mapFT)
+			s.JSONFamilyTree(xpath+del+child, del, mapFT) // *** delimiter in key ***
 		}
 	}
 }
@@ -222,21 +216,23 @@ func (s Str) JSONArrInfo(xpath, del, id string) map[string]struct {
 	}{}
 
 	for k, v := range *mapFT {
-		if sHP(v[0], "[]") {
-			content, _, _ := s.JSONXPathValue(k, ".")
-			content = Str(content).RmBrackets()
-			n := Str(content).BracketPairCount(BCurly)
-			if n == 0 {
-				bbox, _, _ := Str(content).BracketsPos(BBox, 1, 1)
-				n = sCnt(bbox, ",") + 1
-				if sT(bbox, " \t\n\r[]") == "" {
-					n = 0
+		for _, e := range v {
+			if sHP(e, "[]") {
+				e = e[2:]
+				content, _, _ := s.JSONXPathValue(k+del+e, del) // *** get all array '[ *** ]' ***
+				n := Str(content).BracketPairCount(BCurly)
+				if n == 0 {
+					bbox, _, _ := Str(content).BracketsPos(BBox, 1, 1)
+					n = sCnt(bbox, ",") + 1
+					if sT(bbox, " \t\n\r[]") == "" {
+						n = 0
+					}
 				}
+				mapAC[k+del+e] = struct {
+					Count int
+					ID    string
+				}{Count: n, ID: id}
 			}
-			mapAC[k] = struct {
-				Count int
-				ID    string
-			}{Count: n, ID: id}
 		}
 	}
 	return mapAC
