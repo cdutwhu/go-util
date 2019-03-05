@@ -6,7 +6,7 @@ import (
 )
 
 func TestJSONChild(t *testing.T) {
-	// s := Str(`{ 
+	// s := Str(`{
 	// 	"data": {
 	// 		"Name": [ 23, 45,   23,  {"p1":   "v1"},  "ab   c", {"p2":     "v2"}   ,  "def" ]
 	// 	}
@@ -15,25 +15,53 @@ func TestJSONChild(t *testing.T) {
 	// root, ext, newJSON := s.JSONRootEx()
 	// fPln(root, ext)
 	// fPln(newJSON)
-	
+
 	//children := s.JSONChildren("", ".")
 	//fPln(children)
 
-
 	s := Str(`{
-		"Name2": [ 1, 2,   3,  "ooo" ],
-		"Name": [ 23, 45,   23,  {"p1":   "v1"},  "ab   c", {"p2":  "v2"},  "def" ],
-		"Name1": [ 1, 2,   3,  {"p3":   "v3" },  "yy   c", {"p4":  "v4"},  "ttt" ],
-		"Name3": [ 9, 8,  7,  "666" ]
+		"actor": {
+			"name": "Team PB",
+			"mbox": "mailto:teampb@example.com",
+			"simple": [ 1, 3, 4, 5 ],
+			"member": [
+				{
+					"name": "Andrew Downes",
+					"account": {
+						"homePage": "http://www.example1.com",
+						"name": "13936749111"
+					},
+					"openid": "http://toby.openid.example1.org/",
+					"mbox_sha1sum": "ebd31e95054c018b10727ccffd2ef2ec3a016ee9111",
+					"objectType": "Agent"
+				},
+				{
+					"name": "Toby Nichols",
+					"account": {
+						"homePage": "http://www.example2.com",
+						"name": "13936749222"
+					},
+					"openid": "http://toby.openid.example2.org/",
+					"mbox_sha1sum": "ebd31e95054c018b10727ccffd2ef2ec3a016ee9222",
+					"objectType": "Agent"
+				},
+				{
+					"name": "Ena Hills",
+					"account": {
+						"homePage": "http://www.example3.com",
+						"name": "13936749333"
+					},
+					"openid": "http://toby.openid.example3.org/",
+					"mbox_sha1sum": "ebd31e95054c018b10727ccffd2ef2ec3a016ee9333",
+					"objectType": "Agent"
+				}
+			],
+			"objectType": "Group"
+		}
 	}`)
-	fPln(s.JSONChildValue("Name", 4))
-	fPln(s.JSONXPathValue("Name", "."))
-	fPln(s.JSONXPathValue("Name", ".", 5))
-	fPln(s.JSONXPathValue("Name", ".", 1))
-	fPln(s.JSONXPathValue("Name", ".", 3))
-	fPln(s.JSONXPathValue("Name2", ".", 4))
-	fPln(s.JSONXPathValue("Name", ".", 6))
-	fPln(s.JSONXPathValue("Name3", ".", 4))
+	//fPln(s.JSONChildValue("Name", 4))
+	fPln(s.JSONXPathValue("actor.member", "."))
+	fPln(s.JSONChildren("actor.member", "."))
 }
 
 func TestJSONMake(t *testing.T) {

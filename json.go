@@ -165,6 +165,10 @@ func (s Str) JSONRootEx(rootExt string) (root string, ext bool, extJSON string) 
 // JSONChildren :
 func (s Str) JSONChildren(xpath, del string) (children []string) {
 	content, _, _ := s.JSONXPathValue(xpath, del)
+	if ok, pos := Str(content).LooseSearchChars("[{", " \t\n\r"); ok && pos == 0 {
+		content, _, _ = s.JSONXPathValue(xpath, del, 0)
+	}
+
 	posList := []int{}
 	for _, p := range Str(content).Indices(`":`) {
 		if Str(content).BracketDepth(BCurly, p) == 1 {
@@ -233,24 +237,4 @@ func (s Str) JSONArrInfo(xpath, del, id string) (*map[string][]string, *map[stri
 		}
 	}
 	return mapFT, mapAC
-}
-
-// ******************************************************************************
-
-// GQLBuild : ignore identical field
-func (s Str) GQLBuild(typename, field, fieldtype string) (gql string) {
-	if ok, pos := s.LooseSearchStrs("type", typename, "{", " \t"); ok {
-		content, _, r := s[pos:].BracketsPos(BCurly, 1, 1)
-		if sCtn(content, field+":") {
-			return s.V()
-		}
-		gql = s.V()[:pos+r]
-		tail := s.V()[pos+r+1:]
-		add := fSf("\t%s: %s\n}", field, fieldtype)
-		gql += add + tail
-	} else {
-		s += Str(fSf("\n\ntype %s {\n\t%s: %s\n}", typename, field, fieldtype))
-		gql = s.V()
-	}
-	return gql
 }
