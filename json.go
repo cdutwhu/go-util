@@ -111,7 +111,7 @@ func (s Str) JSONXPathValue(xpath, del string, idx ...int) (content string, posS
 }
 
 // // JSONBuild :
-// func (s Str) JSONBuild(xpath, del string, idx int, property, value string, update bool) (string, bool) {
+// func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (string, bool) {
 // 	if sT(s.V(), " \t") == "" {
 // 		s = Str("{}")
 // 	}
@@ -137,7 +137,7 @@ func (s Str) JSONXPathValue(xpath, del string, idx ...int) (content string, posS
 // 	return "", false
 // }
 
-// JSONBuild : Do NOT support mixed (atomic & object) types in one array
+// JSONBuild : NOT support mixed (atomic & object) types in one array
 func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (string, bool) {
 	if sT(s.V(), " \t") == "" {
 		s = Str("{}")
@@ -155,28 +155,30 @@ func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (stri
 
 	if sub, start, end := s.JSONXPathValue(xpath, del, idx); start != -1 {
 
-		if p0 := sI(sub, property); p0 > 0 { //                                   ** incoming p-v's property already exists **
+		for p0 := range Str(sub).Indices(property) { //                                 ** incoming p-v's property already exists **
+			if sCnt(sub[:p0], "{")-sCnt(sub[:p0], "}") == 1 { //                          ** 1 level child property **
 
-			if p1 := sI(sub[p0:], property+"["); p1 == 0 { //                       ** already array format, the 3rd ... coming **
-				box, _, _ := Str(sub).BracketsPos(BBox, 1, 1)
-				inBox := Str(Str(box).RmBrackets()).TrimAllLMR(" \t")
-				ss := append(sSpl(inBox, ","), value)
-				newBox := Str(sJ(ss, ", ")).MkBrackets(BBox)
-				sub = sRep(sub, box, newBox, 1)
-			} else { //                                                             ** only one exists, the 2nd coming, change to array format **
-				k, v := Str(sub[p0:]).KeyValuePair(":", ' ', ' ', false, false)
-				if !sHP(v, "{") { //                                                  ** atomic value **
-					v = sTR(v, ",")
-					sub = sRep(sub, property+v, property+"["+v+", "+value+"]", 1)
-				} else { //                                                           ** object value **
-					sub = sRep(sub, k+":", k+": [", 1)
-					sub = sT(sub[:len(sub)-1], " ") + ", " + "{}" + " ] " + "}"
+				if p1 := sI(sub[p0:], property+"["); p1 == 0 { //                           ** already array format, 3rd, 4th... coming **
+					box, _, _ := Str(sub).BracketsPos(BBox, 1, 1)
+					inBox := Str(Str(box).RmBrackets()).TrimAllLMR(" \t")
+					ss := append(sSpl(inBox, ","), value)
+					newBox := Str(sJ(ss, ", ")).MkBrackets(BBox)
+					sub = sRep(sub, box, newBox, 1)
+				} else { //                                                                 ** only one exists, the 2nd coming, change to array format **
+					k, v := Str(sub[p0:]).KeyValuePair(":", ' ', ' ', false, false)
+					if !sHP(v, "{") { //                                                      ** atomic value **
+						v = sTR(v, ",")
+						sub = sRep(sub, property+v, property+"["+v+", "+value+"]", 1)
+					} else { //                                                               ** object value **
+						sub = sRep(sub, k+":", k+": [", 1)
+						sub = sT(sub[:len(sub)-1], " ") + ", " + "{}" + " ] " + "}"
+					}
 				}
-			}
 
-			left, right := s.V()[:start], s.V()[end+1:]
-			json := left + sub + right
-			return json, Str(json).IsJSON()
+				left, right := s.V()[:start], s.V()[end+1:]
+				json := left + sub + right
+				return json, Str(json).IsJSON()
+			}
 		}
 
 		// **********************************************
