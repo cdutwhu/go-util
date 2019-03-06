@@ -495,6 +495,12 @@ func (s Str) TrimAllInternal(cutset string) (r string) {
 	return
 }
 
+// TrimAllLMR :
+func (s Str) TrimAllLMR(cutset string) (r string) {
+	r = sT(s.V(), cutset)
+	return Str(r).TrimAllInternal(cutset)
+}
+
 // KeyValueMap :
 func (s Str) KeyValueMap(delimiter, assign, terminator rune) (r map[string]string) {
 	r = make(map[string]string)

@@ -66,10 +66,12 @@ func TestJSONChild(t *testing.T) {
 
 func TestJSONMake(t *testing.T) {
 	json, ok := Str("").JSONBuild("", "", 1, "StaffPersonal", "{}")
-	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "-RefId", "{}")
+	//json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "-RefId", "{}")
 	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "LocalId", "946379881")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "LocalId", "946379882")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "LocalIdTest", "tttttttt")
 	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "StateProvinceId", "C2345681")
-	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "OtherIdList", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "OtherIdList", "{}") // ***
 	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList", ".", 1, "OtherId", "{}")
 	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList.OtherId", ".", 1, "-Type", "0004")
 	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList.OtherId", ".", 1, "#content", "333333333")
@@ -79,11 +81,22 @@ func TestJSONMake(t *testing.T) {
 	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo", ".", 1, "OtherNames", "{}")
 	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.OtherNames", ".", 1, "Name", "[{},{}]") // ***
 	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.OtherNames.Name", ".", 1, "-Type", "AKA")
-	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.OtherNames.Name", ".", 2, "-Type", "PRF")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.OtherNames.Name", ".", 2, "-Type", "PRF") // ***
 	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo", ".", 1, "Demographics", "{}")
 	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.Demographics", ".", 1, "CountriesOfCitizenship", "{}")
-	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.Demographics.CountriesOfCitizenship", ".", 1, "CountryOfCitizenship", "[\"8104\", \"1101\"]") // ***
-	// fPln(Str(json).JSONXPath("StaffPersonal.PersonInfo.OtherNames.Name", ".", 1))
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.Demographics.CountriesOfCitizenship", ".", 1, "CountryOfCitizenship", "\"8104\"")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.Demographics.CountriesOfCitizenship", ".", 1, "CountryOfCitizenship", "\"1101\"")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "LocalId", "946379883")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "LocalIdTest", "iiiiiiii")
+	json, ok = Str(json).JSONBuild("StaffPersonal.PersonInfo.Demographics.CountriesOfCitizenship", ".", 1, "CountryOfCitizenship", "\"2202\"")
+	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList", ".", 1, "OtherId", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList.OtherId", ".", 1, "-Type", "0005")
+	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList.OtherId", ".", 2, "-Type1", "0008")
+	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList.OtherId", ".", 2, "#content", "44444444")
+	// json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "LocalId", "{}")
+	json, ok = Str(json).JSONBuild("StaffPersonal", ".", 1, "LocalId", "test2")
+	json, ok = Str(json).JSONBuild("StaffPersonal.OtherIdList.OtherId", ".", 2, "#content", "44444444")
+	// // fPln(Str(json).JSONXPath("StaffPersonal.PersonInfo.OtherNames.Name", ".", 1))
 
 	fPln(json, ok)
 }

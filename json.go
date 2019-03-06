@@ -110,7 +110,34 @@ func (s Str) JSONXPathValue(xpath, del string, idx ...int) (content string, posS
 	return
 }
 
-// JSONBuild :
+// // JSONBuild :
+// func (s Str) JSONBuild(xpath, del string, idx int, property, value string, update bool) (string, bool) {
+// 	if sT(s.V(), " \t") == "" {
+// 		s = Str("{}")
+// 	}
+
+// 	property = Str(property).MkQuotes(QDouble) + ": "
+// 	if value[0] != '{' && value[0] != '[' {
+// 		value = Str(value).MkQuotes(QDouble)
+// 	}
+
+// 	if s == "{}" {
+// 		s = Str(fSf(`{%s %s}`, property, value))
+// 		return s.V(), s.IsJSON()
+// 	}
+
+// 	if _, start, end := s.JSONXPathValue(xpath, del, idx); start != -1 {
+// 		left, right := s.V()[:end], s.V()[end:]
+// 		if !sHS(left, "{") {
+// 			left += ","
+// 		}
+// 		json := left + " " + property + value + " " + right
+// 		return json, Str(json).IsJSON()
+// 	}
+// 	return "", false
+// }
+
+// JSONBuild : Do NOT support mixed (atomic & object) types in one array
 func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (string, bool) {
 	if sT(s.V(), " \t") == "" {
 		s = Str("{}")
@@ -122,16 +149,41 @@ func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (stri
 	}
 
 	if s == "{}" {
-		s = Str(fSf(`{%s %s}`, property, value))
+		s = Str(fSf(`{ %s%s}`, property, value))
 		return s.V(), s.IsJSON()
 	}
 
-	if _, start, end := s.JSONXPathValue(xpath, del, idx); start != -1 {
-		left, right := s.V()[:end], s.V()[end:]
-		if !sHS(left, "{") {
-			left += ","
+	if sub, start, end := s.JSONXPathValue(xpath, del, idx); start != -1 {
+
+		if p0 := sI(sub, property); p0 > 0 { //                                   ** incoming p-v's property already exists **
+
+			if p1 := sI(sub[p0:], property+"["); p1 == 0 { //                       ** already array format, the 3rd ... coming **
+				box, _, _ := Str(sub).BracketsPos(BBox, 1, 1)
+				inBox := Str(Str(box).RmBrackets()).TrimAllLMR(" \t")
+				ss := append(sSpl(inBox, ","), value)
+				newBox := Str(sJ(ss, ", ")).MkBrackets(BBox)
+				sub = sRep(sub, box, newBox, 1)
+			} else { //                                                             ** only one exists, the 2nd coming, change to array format **
+				k, v := Str(sub[p0:]).KeyValuePair(":", ' ', ' ', false, false)
+				if !sHP(v, "{") { //                                                  ** atomic value **
+					v = sTR(v, ",")
+					sub = sRep(sub, property+v, property+"["+v+", "+value+"]", 1)
+				} else { //                                                           ** object value **
+					sub = sRep(sub, k+":", k+": [", 1)
+					sub = sT(sub[:len(sub)-1], " ") + ", " + "{}" + " ] " + "}"
+				}
+			}
+
+			left, right := s.V()[:start], s.V()[end+1:]
+			json := left + sub + right
+			return json, Str(json).IsJSON()
 		}
-		json := left + " " + property + value + " " + right
+
+		// **********************************************
+
+		left, right := sT(s.V()[:end], " \t"), sT(s.V()[end:], " \t")
+		left = TerOp(!sHS(left, "{"), left+",", left).(string)
+		json := left + " " + sT(property+value, " \t") + " " + right
 		return json, Str(json).IsJSON()
 	}
 	return "", false
