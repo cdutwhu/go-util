@@ -155,7 +155,7 @@ func (s Str) JSONBuild(xpath, del string, idx int, property, value string) (stri
 
 	if sub, start, end := s.JSONXPathValue(xpath, del, idx); start != -1 {
 
-		for p0 := range Str(sub).Indices(property) { //                                 ** incoming p-v's property already exists **
+		for _, p0 := range Str(sub).Indices(property) { //                              ** incoming p-v's property already exists **
 			if sCnt(sub[:p0], "{")-sCnt(sub[:p0], "}") == 1 { //                          ** 1 level child property **
 
 				if p1 := sI(sub[p0:], property+"["); p1 == 0 { //                           ** already array format, 3rd, 4th... coming **
