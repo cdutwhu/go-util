@@ -8,6 +8,32 @@ func (s Str) IsJSON() bool {
 	return json.Unmarshal([]byte(s.V()), &js) == nil
 }
 
+// IsJSONRootArray : Array Info only be valid on one-type element
+func (s Str) IsJSONRootArray() (rootarray bool, tStr string, n int) {
+	if s.IsJSON() {
+		s = s.T(BLANK)
+		if s.C(0) == '[' && s.C(LAST) == ']' {
+			rootarray = true
+
+			if s.TrimAllLMR(BLANK).L() == 2 {
+				tStr, n = JSONTypeDesc[JT_NULL], 0
+				return
+			}
+
+			if ok, start, _ := s.LooseSearchStrs("[", "{", BLANK); ok && start == 0 {
+				tStr, n = JSONTypeDesc[JT_OBJ], s.RmBrackets().BracketPairCount(BCurly)
+			} else if ok, start, _ := s.LooseSearchStrs("[", "[", BLANK); ok && start == 0 {
+				tStr, n = JSONTypeDesc[JT_ARR], s.RmBrackets().BracketPairCount(BBox)
+			} else if ok, start, _ := s.LooseSearchStrs("[", "\"", BLANK); ok && start == 0 {
+				tStr, n = JSONTypeDesc[JT_STR], s.RmBrackets().QuotePairCount(QDouble)
+			} else {
+				tStr, n = JSONTypeDesc[JT_NUM], sCnt(s.V(), ",")+1
+			}
+		}
+	}
+	return
+}
+
 // JSONRoot : The first json child                                                                                 &
 func (s Str) JSONRoot() string {
 	PC(!s.IsJSON(), fEf("Invalid JSON"))

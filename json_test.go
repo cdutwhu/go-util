@@ -6,6 +6,12 @@ import (
 )
 
 func TestJSONChild(t *testing.T) {
+
+	jsonSample := Str(` [ "a" ] `)
+	fPln(jsonSample.IsJSON())
+	fPln(jsonSample.IsJSONRootArray())
+
+
 	jsonBytes, _ := ioutil.ReadFile("json_test.json")
 	s := Str(jsonBytes)
 
