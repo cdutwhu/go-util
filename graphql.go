@@ -2,9 +2,9 @@ package util
 
 // GQLBuild : ignore identical field
 func (s Str) GQLBuild(typename, field, fieldtype string) (gql string) {
-	if ok, pos := s.LooseSearchStrs("type", typename, "{", " \t"); ok {
+	if ok, pos, _ := s.LooseSearchStrs("type", typename, "{", " \t"); ok {
 		content, _, r := s[pos:].BracketsPos(BCurly, 1, 1)
-		if sCtn(content, field+":") {
+		if sCtn(content.V(), field+":") {
 			return s.V()
 		}
 		gql = s.V()[:pos+r]

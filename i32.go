@@ -39,11 +39,44 @@ func (i I32) InArr(arr ...int) bool {
 func MinOf(vars ...int) int {
 	min := vars[0]
 	for _, i := range vars {
-		if min > i {
+		if i < min {
 			min = i
 		}
 	}
 	return min
+}
+
+// MinPosOf :
+func MinPosOf(vars ...int) int {
+	min := MaxInt
+	for _, i := range vars {
+		if i < min && i > 0 {
+			min = i
+		}
+	}
+	return TerOp(min != MaxInt, min, -1).(int)
+}
+
+// MinNoNegOf :
+func MinNoNegOf(vars ...int) int {
+	min := MaxInt
+	for _, i := range vars {
+		if i < min && i >= 0 {
+			min = i
+		}
+	}
+	return TerOp(min != MaxInt, min, -1).(int)
+}
+
+// MaxOf :
+func MaxOf(vars ...int) int {
+	max := vars[0]
+	for _, i := range vars {
+		if i > max {
+			max = i
+		}
+	}
+	return max
 }
 
 // ToStr :

@@ -9,17 +9,10 @@ import (
 )
 
 var (
-	sHP  = strings.HasPrefix
-	sHS  = strings.HasSuffix
 	sCtn = strings.Contains
 	sCnt = strings.Count
-	sI   = strings.Index
-	sLI  = strings.LastIndex
 	sJ   = strings.Join
 	sSpl = strings.Split
-	sT   = strings.Trim
-	sTL  = strings.TrimLeft
-	sTR  = strings.TrimRight
 	sFF  = strings.FieldsFunc
 	sRep = strings.Replace
 

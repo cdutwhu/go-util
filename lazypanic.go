@@ -31,7 +31,7 @@ func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interf
 		err := fSp(p)
 		isNoFatal := TerOp(sCtn(err, NOFATALMARK), true, false).(bool)
 
-		f := getFileWithPrefix(Str(logfile).DefValue(defLog), fSf("\n*** Panic Error *** Fatal : %t ***\n", isNoFatal))
+		f := getFileWithPrefix(Str(logfile).DefValue(defLog).V(), fSf("\n*** Panic Error *** Fatal : %t ***\n", isNoFatal))
 		defer f.Close()
 		log.SetOutput(f)
 		log.Println(p)
@@ -51,7 +51,7 @@ func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interf
 func LogOnError(logfile string, errs ...error) {
 	for _, err := range errs {
 		if err != nil {
-			f := getFileWithPrefix(Str(logfile).DefValue(defLog), "\n*** Log Error ***\n")
+			f := getFileWithPrefix(Str(logfile).DefValue(defLog).V(), "\n*** Log Error ***\n")
 			defer f.Close()
 			log.SetOutput(f)
 			errStackStr := errStack(err, 1, 2, 3, 4)
