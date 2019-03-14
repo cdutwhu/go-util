@@ -14,6 +14,7 @@ func TestJSONChild(t *testing.T) {
 
 	jsonBytes, _ := ioutil.ReadFile("json_test.json")
 	s := Str(jsonBytes)
+	s.SetEnC()
 
 	if !s.IsJSON() {
 		t.Errorf("JSON Format Error\n")

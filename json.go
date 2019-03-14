@@ -11,11 +11,12 @@ func (s Str) IsJSON() bool {
 // IsJSONRootArray : Array Info only be valid on one-type element
 func (s Str) IsJSONRootArray() (rootarray bool, tStr string, n int) {
 	if s.IsJSON() {
+		s.SetEnC()
 		s = s.T(BLANK)
 		if s.C(0) == '[' && s.C(LAST) == ']' {
 			rootarray = true
 
-			if s.TrimAllLMR(BLANK).L() == 2 {
+			if s.S(1, ALL-1).T(BLANK) == "" {
 				tStr, n = JSONTypeDesc[JT_NULL], 0
 				return
 			}
