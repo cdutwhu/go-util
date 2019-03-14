@@ -576,18 +576,19 @@ NEXT:
 	return r
 }
 
-// // TrimInternalEachLine :                                                                          &
-// func (s Str) TrimInternalEachLine(cutset rune, nkeep int) (r Str) {
-// 	strs := []Str{}
-// 	lns := sFF(s.V(), func(c rune) bool { return c == '\n' })
-// 	for iln, ln := range lns {
-// 		strs = append(strs, Str(ln).TrimInternal(cutset, nkeep))
-// 		if iln < len(lns)-1 {
-// 			strs = append(strs, "\n")
-// 		}
-// 	}
-// 	return TerOp(s.C(LAST) == '\n', sJ(strs, "")+"\n", sJ(strs, "")).(string)
-// }
+// TrimInternalEachLine :                                                                          ?
+func (s Str) TrimInternalEachLine(cutset rune, nkeep int) (r Str) {
+	strs := []string{}
+	lns := sFF(s.V(), func(c rune) bool { return c == '\n' })
+	for iln, ln := range lns {
+		strs = append(strs, Str(ln).TrimInternal(cutset, nkeep).V())
+		if iln < len(lns)-1 {
+			strs = append(strs, "\n")
+		}
+	}
+	str := TerOp(s.C(LAST) == '\n', sJ(strs, "")+"\n", sJ(strs, "")).(string)
+	return Str(str)
+}
 
 // TrimAllInternal :                                                                               &
 func (s Str) TrimAllInternal(cutset string) (r Str) {
