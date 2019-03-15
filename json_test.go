@@ -11,8 +11,7 @@ func TestJSONChild(t *testing.T) {
 	fPln(jsonSample.IsJSON())
 	fPln(jsonSample.IsJSONRootArray())
 
-
-	jsonBytes, _ := ioutil.ReadFile("json_test.json")
+	jsonBytes, _ := ioutil.ReadFile("json_test.json") // only LF at end of line
 	s := Str(jsonBytes)
 	s.SetEnC()
 
