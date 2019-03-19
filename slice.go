@@ -208,6 +208,39 @@ func (ga GArr) AllAreIdentical() bool {
 	return true
 }
 
+// InterSec :
+func (ga GArr) InterSec(items ...interface{}) (r []interface{}) {
+NEXT:
+	for _, g := range ga {
+		for _, item := range items {
+			if g == item {
+				r = append(r, g)
+				continue NEXT
+			}
+		}
+	}
+	return
+}
+
+// Union :
+func (ga GArr) Union(items ...interface{}) (r []interface{}) {
+	for _, g := range ga {
+		r = append(r, g)
+	}
+	rOri := make([]interface{}, len(r))
+	copy(rOri, r)
+NEXT:
+	for _, item := range items {
+		for _, rItem := range rOri {
+			if item == rItem {
+				continue NEXT
+			}
+		}
+		r = append(r, item)
+	}
+	return
+}
+
 /**********************************************************/
 
 // ToStrs :

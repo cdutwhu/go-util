@@ -71,3 +71,11 @@ func TestAllAreIdentical(t *testing.T) {
 	arr := ToGA("abc", "abc", "abc")
 	fPln(arr.AllAreIdentical())
 }
+
+func TestInterSecANDUnion(t *testing.T) {
+	arr := ToGA("::", "abc", "def", "mn", "A")
+	r1 := arr.InterSec("abcd", "def", "::", "A")
+	fPln(r1)
+	r2 := arr.Union("abcd", "def", "::", "B")
+	fPln(r2)
+}
