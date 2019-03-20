@@ -60,7 +60,7 @@ func (s Str) JSONRootEx(rootExt string) (root string, ext bool, extJSON string) 
 	return
 }
 
-// JSONChildArrCnt : if this child is [{},{},...], return array count                                              ?
+// JSONChildArrCnt : if this child elements are unified, is like [{},{},...], return array count                                              ?
 func (s Str) JSONChildArrCnt(child string) int {
 	child = Str(child).MkQuotes(QDouble).V() + ":"
 	Lc := Str(child).L()
@@ -346,7 +346,7 @@ func (s Str) JSONFamilyTree(xpath, del string, mapFT *map[string][]string) {
 			if Str(child).HP("[]") {
 				child = Str(child).S(2, ALL).V()
 			}
-			nextPath := Str(xpath + del + child).TL(".").V()
+			nextPath := Str(xpath + del + child).T(del).V()
 			s.JSONFamilyTree(nextPath, del, mapFT) //                  *** delimiter in key ***
 		}
 	}
