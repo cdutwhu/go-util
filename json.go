@@ -556,7 +556,12 @@ func (s Str) JSONArrInfo(xpath, del, id string, mapFT *map[string][]string) (*ma
 // JSONObjectMerge :
 func (s Str) JSONObjectMerge(json string) (rst string) {
 	jsonStr := Str(json)
-	PC(!s.IsJSON() || !jsonStr.IsJSON(), fEf("Error: Invalid JSON string"))
+	PC((s.V() != "" && !s.IsJSON()) || !jsonStr.IsJSON(), fEf("Error: Invalid JSON string"))
+
+	if s.V() == "" {
+		return json
+	}
+
 	root1, root2 := s.JSONRoot(), jsonStr.JSONRoot()
 	PC(root1 != root2, fEf("Error: Different JSON object"))
 
