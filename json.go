@@ -38,7 +38,7 @@ func (s Str) IsJSONRootArray() (rootarray bool, tStr string, n int) {
 // JSONRoot : The first json child                                                                                 &
 func (s Str) JSONRoot() string {
 	PC(!s.IsJSON(), fEf("Invalid JSON"))
-	str := s.RmBrackets()
+	str := s.T(BLANK).RmBrackets().T(BLANK)
 	if p := str.Idx(":"); p > 0 {
 		str = str.S(0, p)
 		str = str.T(BLANK)
@@ -129,6 +129,7 @@ AGAIN:
 // if idx not given, and if child is array, get whole array content.
 // if child is array, return the array's count
 func (s Str) JSONChildValue(child string, idx ...int) (content string, pos int, nArr int) {
+	s = s.T(BLANK)
 	nArr = -1
 
 	if !s.HP("[") && !s.HS("]") {
@@ -550,6 +551,23 @@ func (s Str) JSONArrInfo(xpath, del, id string, mapFT *map[string][]string) (*ma
 	//}
 
 	return mapFT, mapAC
+}
+
+// JSONObjectMerge :
+func (s Str) JSONObjectMerge(json string) (rst string) {
+	jsonStr := Str(json)
+	PC(!s.IsJSON() || !jsonStr.IsJSON(), fEf("Error: Invalid JSON string"))
+	root1, root2 := s.JSONRoot(), jsonStr.JSONRoot()
+	PC(root1 != root2, fEf("Error: Different JSON object"))
+
+	content1, _, _ := s.JSONChildValue(root1)
+	content2, _, _ := jsonStr.JSONChildValue(root2)
+	content1, content2 = Str(content1).TL("["+BLANK).V(), Str(content2).TL("["+BLANK).V()
+	content1, content2 = Str(content1).TR("]"+BLANK).V(), Str(content2).TR("]"+BLANK).V()
+
+	rst = fSf(`{ "%s": [ %s, %s ] }`, root1, content1, content2)
+	PC(!Str(rst).IsJSON(), fEf("Error: Json Merge Result"))
+	return
 }
 
 // JSONBuild : NOT support mixed (atomic & object) types in one array                                              &

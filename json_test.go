@@ -249,25 +249,128 @@ func TestJSONMake(t *testing.T) {
 	ioutil.WriteFile("temp.json", []byte(json), 0666)
 }
 
+func JSONObjectMerge(t *testing.T) {
+
+	json1 := ` 
+	{
+		"TeachingGroup1": {
+			"RefId": "F47C2C6D-BD49-40E6-A430-360333274DB2",
+			"SchoolYear": "2018",
+			"LocalId": "2018-English-8-1-B",
+			"ShortName": "8B English 1",
+			"LongName": "Year 8B English 1",
+			"TimeTableSubjectRefId": "FD3E4B1F-0FC6-4607-BB95-78791ABA8997",
+			"TeacherList": {
+				"TeachingGroupTeacher": {
+					"StaffPersonalRefId": "D4A3C1E3-3F6E-4B31-ABA6-26809DF5FD63",
+					"StaffLocalId": "kafaj506",
+					"Name": {
+						"Type": "LGL",
+						"FamilyName": "Knoll",
+						"GivenName": "Ina"
+					},
+					"Association": "Class Teacher"
+				}
+			},
+			"TeachingGroupPeriodList": {
+				"TeachingGroupPeriod": [
+					{
+						"RoomNumber": "171",
+						"DayId": "Fr",
+						"PeriodId": "12:00:00"
+					},
+					{
+						"RoomNumber": "166",
+						"DayId": "Fr",
+						"PeriodId": "15:00:00"
+					}
+				]
+			}
+		}
+	}`
+
+	json2 := `{
+		"TeachingGroup1": {
+			"RefId": "F47C2C6D-BD49-40E6-A430-111111111111",
+			"SchoolYear": "2018",
+			"LocalId": "2018-English-8-1-B",
+			"ShortName": "8B English 1",
+			"LongName": "Year 8B English 1",
+			"TimeTableSubjectRefId": "FD3E4B1F-0FC6-4607-BB95-78791ABA8997",
+			"TeacherList": {
+				"TeachingGroupTeacher": {
+					"StaffPersonalRefId": "D4A3C1E3-3F6E-4B31-ABA6-26809DF5FD63",
+					"StaffLocalId": "kafaj506",
+					"Name": {
+						"Type": "LGL",
+						"FamilyName": "Knoll",
+						"GivenName": "Ina"
+					},
+					"Association": "Class Teacher"
+				}
+			},
+			"TeachingGroupPeriodList": {
+				"TeachingGroupPeriod": [
+					{
+						"RoomNumber": "171",
+						"DayId": "Fr",
+						"PeriodId": "12:00:00"
+					},
+					{
+						"RoomNumber": "166",
+						"DayId": "Fr",
+						"PeriodId": "15:00:00"
+					}
+				]
+			}
+		}
+	}`
+
+	rst := Str(json1).JSONObjectMerge(json2)
+	ioutil.WriteFile("debug_temp.json", []byte(rst), 0666)
+}
+
 func TestJSONRoot(t *testing.T) {
-	jsonbytes, _ := ioutil.ReadFile("./test1.json")
-	json := string(jsonbytes)
+	// jsonbytes, _ := ioutil.ReadFile("./test1.json")
+	json := Str(`{
+		"TeachingGroup": {
+			"RefId": "F47C2C6D-BD49-40E6-A430-360333274DB2",
+			"SchoolYear": "2018",
+			"LocalId": "2018-English-8-1-B",
+			"ShortName": "8B English 1",
+			"LongName": "Year 8B English 1",
+			"TimeTableSubjectRefId": "FD3E4B1F-0FC6-4607-BB95-78791ABA8997",
+			"TeacherList": {
+				"TeachingGroupTeacher": {
+					"StaffPersonalRefId": "D4A3C1E3-3F6E-4B31-ABA6-26809DF5FD63",
+					"StaffLocalId": "kafaj506",
+					"Name": {
+						"Type": "LGL",
+						"FamilyName": "Knoll",
+						"GivenName": "Ina"
+					},
+					"Association": "Class Teacher"
+				}
+			}
+		}
+	}`)
+	fPln(json.JSONRoot())
 	// root, ext, newJSON := Str(json).JSONRootEx("MyRoot")
 	// fPln(root)
 	// if ext {
 	// 	json = newJSON
 	// }
 
-	mapFT, mapAC := Str(json).JSONArrInfo("", " ~ ", "1234567890", nil)
-	if mapFT != nil && mapAC != nil {
-		for k, v := range *mapFT {
-			fPln(k, v)
-		}
-		fPln("<----------------------------------->")
-		for k, v := range *mapAC {
-			fPln(k, v)
-		}
-	}
+	// mapFT, mapAC := Str(json).JSONArrInfo("", " ~ ", "1234567890", nil)
+	// if mapFT != nil && mapAC != nil {
+	// 	for k, v := range *mapFT {
+	// 		fPln(k, v)
+	// 	}
+	// 	fPln("<----------------------------------->")
+	// 	for k, v := range *mapAC {
+	// 		fPln(k, v)
+	// 	}
+	// }
 }
 
 func TestGQLBuild(t *testing.T) {
