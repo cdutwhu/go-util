@@ -20,7 +20,7 @@ func GoFn(fid string,
 		maplmtch = MakeMapOfStrChanInt(fid, n)
 	}
 
-	mapid[fid] = TerOp(mapid[fid] == n, 0, mapid[fid]).(int)
+	mapid[fid] = IF(mapid[fid] == n, 0, mapid[fid]).(int)
 
 	if blockIfFull {
 		maplmtch[fid] <- mapid[fid]

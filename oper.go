@@ -1,7 +1,7 @@
 package util
 
-// TerOp : Ternary Operator LIKE < ? : >, BUT NO S/C, so block1 and block2 MUST all valid. e.g. type assert, nil pointer, out of index
-func TerOp(condition bool, block1, block2 interface{}) interface{} {
+// IF : Ternary Operator LIKE < ? : >, BUT NO S/C, so block1 and block2 MUST all valid. e.g. type assert, nil pointer, out of index
+func IF(condition bool, block1, block2 interface{}) interface{} {
 	if condition {
 		return block1
 	}

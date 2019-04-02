@@ -29,8 +29,8 @@ func PanicHandle(p interface{}, logfile string) {
 func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interface{}), params ...interface{}) {
 	if p != nil {
 		err := fSp(p)
-		isNoFatal := TerOp(sCtn(err, NONFATALMARK), true, false).(bool)
-		logfile = TerOp(logfile == "", defLog, logfile).(string)
+		isNoFatal := IF(sCtn(err, NONFATALMARK), true, false).(bool)
+		logfile = IF(logfile == "", defLog, logfile).(string)
 
 		f := getFileWithPrefix(logfile, fSf("\n*** Panic Error *** Fatal : %t ***\n", isNoFatal))
 		defer f.Close()
@@ -52,7 +52,7 @@ func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interf
 func LogOnError(logfile string, errs ...error) {
 	for _, err := range errs {
 		if err != nil {
-			logfile = TerOp(logfile == "", defLog, logfile).(string)
+			logfile = IF(logfile == "", defLog, logfile).(string)
 			f := getFileWithPrefix(logfile, "\n*** Log Error ***\n")
 			defer f.Close()
 			log.SetOutput(f)

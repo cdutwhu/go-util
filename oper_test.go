@@ -3,7 +3,7 @@ package util
 import "testing"
 
 func TestTerOp(t *testing.T) {
-	fPln(TerOp(1 == 2, "abc", "def").(string))
+	fPln(IF(1 == 2, "abc", "def").(string))
 }
 
 func TestCaseAssign(t *testing.T) {
