@@ -7,7 +7,6 @@ import (
 )
 
 func TestGoFunc(t *testing.T) {
-
 	start := time.Now()
 	for i := 0; i < 20; i++ {
 		arr := []int{1, 2, 3}
@@ -22,7 +21,7 @@ func TestGoFunc(t *testing.T) {
 }
 
 func worker(done <-chan int, id int, args ...interface{}) {
-	p0 := args[0].([]int)[0]
+	p0 := args[0].([]int)[1]
 	p1, p2 := args[1], args[2]
 	fPln("id:", id, " --- ", p0, p1, p2)
 	// fPln(p0)

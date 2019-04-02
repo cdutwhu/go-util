@@ -29,9 +29,10 @@ func PanicHandle(p interface{}, logfile string) {
 func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interface{}), params ...interface{}) {
 	if p != nil {
 		err := fSp(p)
-		isNoFatal := TerOp(sCtn(err, NOFATALMARK), true, false).(bool)
+		isNoFatal := TerOp(sCtn(err, NONFATALMARK), true, false).(bool)
+		logfile = TerOp(logfile == "", defLog, logfile).(string)
 
-		f := getFileWithPrefix(Str(logfile).DefValue(defLog).V(), fSf("\n*** Panic Error *** Fatal : %t ***\n", isNoFatal))
+		f := getFileWithPrefix(logfile, fSf("\n*** Panic Error *** Fatal : %t ***\n", isNoFatal))
 		defer f.Close()
 		log.SetOutput(f)
 		log.Println(p)
@@ -51,7 +52,8 @@ func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interf
 func LogOnError(logfile string, errs ...error) {
 	for _, err := range errs {
 		if err != nil {
-			f := getFileWithPrefix(Str(logfile).DefValue(defLog).V(), "\n*** Log Error ***\n")
+			logfile = TerOp(logfile == "", defLog, logfile).(string)
+			f := getFileWithPrefix(logfile, "\n*** Log Error ***\n")
 			defer f.Close()
 			log.SetOutput(f)
 			errStackStr := errStack(err, 1, 2, 3, 4)
@@ -130,12 +132,17 @@ func errStack(err error, omit ...int) string {
 	if err != nil {
 		e := errors.New(err)
 		lines := []string{}
-		for i, l := range strings.FieldsFunc(e.ErrorStack(), func(c rune) bool {
-			return C32(c).InArr('\n', '\r')
+
+	NEXT:
+		for i, ln := range strings.FieldsFunc(e.ErrorStack(), func(c rune) bool {
+			return c == '\n' || c == '\r'
 		}) {
-			if !I32(i).InArr(omit...) {
-				lines = append(lines, l)
+			for _, o := range omit {
+				if i == o {
+					continue NEXT
+				}
 			}
+			lines = append(lines, ln)
 		}
 		return strings.Join(lines, "\n")
 	}
