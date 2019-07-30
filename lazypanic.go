@@ -29,7 +29,7 @@ func PanicHandle(p interface{}, logfile string) {
 func PanicHandleEx(p interface{}, logfile string, onPanic func(string, ...interface{}), params ...interface{}) {
 	if p != nil {
 		err := fSp(p)
-		isNoFatal := IF(sCtn(err, NONFATALMARK), true, false).(bool)
+		isNoFatal := IF(sCtn(err, NOFATAL), true, false).(bool)
 		logfile = IF(logfile == "", defLog, logfile).(string)
 
 		f := getFileWithPrefix(logfile, fSf("\n*** Panic Error *** Fatal : %t ***\n", isNoFatal))

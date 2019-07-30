@@ -24,5 +24,5 @@ var (
 )
 
 const (
-	NONFATALMARK = "#NONFATAL#"
+	NOFATAL = "#NOFATAL#"
 )
