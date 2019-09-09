@@ -25,8 +25,8 @@ func MatchAssign(checkCasesValues ...interface{}) interface{} {
 	return nil
 }
 
-// ConditionAssign : NO ShortCut, MUST all valid, e.g. type assert, nil pointer, out of index
-func ConditionAssign(condsValuesDft ...interface{}) interface{} {
+// TrueAssign : NO ShortCut, MUST all valid, e.g. type assert, nil pointer, out of index
+func TrueAssign(condsValuesDft ...interface{}) interface{} {
 	l := len(condsValuesDft)
 	PC(l < 3 || l%2 == 0, fEf("Invalid parameters"))
 
