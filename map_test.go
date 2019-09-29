@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -38,21 +37,11 @@ func TestMap(t *testing.T) {
 	m4 := map[int]string{7: "BBB", 8: "DDD", 1: "FFF"}
 	mm := MapsMerge(m1, m3, m4)
 	fPln(mm)
-}
 
-func TestSliceCover(t *testing.T) {
-	a := []int{1, 2, 3, 4, 5, 6, 7}
-	b := []int{14, 15}
-	ab := SliceCover(a, b).([]int)
-	fmt.Println(ab)
+	m4 = map[int]string{7: "BBB"}
+	mm = MapsMerge(m4)
+	fPln(mm)
 
-	a = []int{1, 2}
-	b = []int{13, 14, 15, 16}
-	ab = SliceCover(a, b).([]int)
-	fmt.Println(ab)
-
-	// A := []string{"a", "b"}
-	// B := []int{1, 2, 3}
-	// AB := SliceCover(A, B)
-	// fmt.Println(AB)
+	EE := MapsMerge()
+	fPln(EE)
 }
