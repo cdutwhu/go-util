@@ -8,8 +8,8 @@ import (
 // SliceAttach :
 func SliceAttach(s1, s2 interface{}, pos int) interface{} {
 	v1, v2 := ref.ValueOf(s1), ref.ValueOf(s2)
-	PC(v1.Kind() != ref.Slice, fEf("s1 is NOT A SLICE!"))
-	PC(v2.Kind() != ref.Slice, fEf("s2 is NOT A SLICE!"))
+	pc(v1.Kind() != ref.Slice, fEf("s1 is NOT A SLICE!"))
+	pc(v2.Kind() != ref.Slice, fEf("s2 is NOT A SLICE!"))
 	l1, l2 := v1.Len(), v2.Len()
 	if l1 > 0 && l2 > 0 {
 		if pos > l1 {

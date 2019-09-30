@@ -11,7 +11,7 @@ func IF(condition bool, block1, block2 interface{}) interface{} {
 // MatchAssign : NO ShortCut, MUST all valid, e.g. type assert, nil pointer, out of index
 func MatchAssign(chkCasesValues ...interface{}) interface{} {
 	l := len(chkCasesValues)
-	PC(l < 4 || l%2 == 1, fEf("Invalid parameters"))
+	pc(l < 4 || l%2 == 1, fEf("Invalid parameters"))
 	_, l1, l2 := 1, (l-1)/2, (l-1)/2
 	check := chkCasesValues[0]
 	cases := chkCasesValues[1 : 1+l1]
@@ -27,7 +27,7 @@ func MatchAssign(chkCasesValues ...interface{}) interface{} {
 // TrueAssign : NO ShortCut, MUST all valid, e.g. type assert, nil pointer, out of index
 func TrueAssign(condsValuesDft ...interface{}) interface{} {
 	l := len(condsValuesDft)
-	PC(l < 3 || l%2 == 0, fEf("Invalid parameters"))
+	pc(l < 3 || l%2 == 0, fEf("Invalid parameters"))
 	l1, l2 := l/2, l/2
 	conds := condsValuesDft[0:l1]
 	values := condsValuesDft[l1 : l1+l2]

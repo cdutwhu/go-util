@@ -9,6 +9,7 @@ import (
 
 var (
 	sCtn = strings.Contains
+	sSpl = strings.Split
 
 	fPln = fmt.Println
 	fPf  = fmt.Printf
@@ -16,9 +17,9 @@ var (
 	fSf  = fmt.Sprintf
 	fSp  = fmt.Sprint
 
-	PC = PanicOnCondition
-	PE = PanicOnError
-	PH = PanicHandle
+	pc = PanicOnCondition
+	ph = PanicHandle
+	pe = PanicOnError
 
 	defLog = path.Join(os.TempDir(), "/GoErrorLog.txt")
 )

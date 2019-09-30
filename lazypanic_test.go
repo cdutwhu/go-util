@@ -11,6 +11,6 @@ func makeErr(a int, b string) (int, string, error) {
 }
 
 func TestPanicOnError(t *testing.T) {
-	defer func() { PH(recover(), "./log.txt") }()
-	PE(fEf("test#NOFATAL"))
+	defer func() { ph(recover(), "./log.txt") }()
+	pe(fEf("test#NOFATAL"))
 }
