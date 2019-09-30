@@ -27,7 +27,7 @@ func TestMap(t *testing.T) {
 	fPln(" ---------------------------------------------- ")
 
 	// m2 := map[string]string{"aa": "bb", "cc": "dd", "ee": "ff"}
-	m3 := map[int]string{2: "BB", -5: "DD", -1: "FF"}
+	m3 := map[int]string{2: "B B   B C", -5: "DD", -1: "FF"}
 	m13 := MapsJoin(m1, m3).(map[int]string)
 	fPln(m13)
 

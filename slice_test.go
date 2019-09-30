@@ -6,6 +6,10 @@ import (
 )
 
 func TestSliceCover(t *testing.T) {
+
+	fmt.Println(XIn("11", []string{"a", "b", "1"}))
+	fmt.Println(XIn("11", []string{"a", "b", "11"}))
+
 	a := []int{1, 2, 3, 4, 5, 6, 7}
 	b := []int{14, 15}
 	ab := SliceAttach(a, b, 7).([]int)

@@ -2,14 +2,30 @@ package util
 
 import (
 	ref "reflect"
+	"regexp"
 )
 
 // MapPrint : Key Sorted Print
 func MapPrint(m interface{}) {
+	re := regexp.MustCompile(`^[+-]?[0-9]*\.?[0-9]+:`)
 	mstr := fSp(m)
 	mstr = mstr[4 : len(mstr)-1]
-	for _, s := range sSpl(mstr, " ") {
-		fPln(s)
+	fPln(mstr)
+	I := 0
+	rmIlist := []int{}
+	ss := sSpl(mstr, " ")
+	for i, s := range ss {
+		if re.MatchString(s) {
+			I = i
+		} else {
+			ss[I] += " " + s
+			rmIlist = append(rmIlist, i) // to be deleted (i)
+		}
+	}
+	for i, s := range ss {
+		if !XIn(i, rmIlist) {
+			fPln(i, s)
+		}
 	}
 }
 

@@ -5,6 +5,19 @@ import (
 	ref "reflect"
 )
 
+// XIn :
+func XIn(e, s interface{}) bool {
+	v := ref.ValueOf(s)
+	pc(v.Kind() != ref.Slice, fEf("s is NOT A SLICE!"))
+	l := v.Len()
+	for i := 0; i < l; i++ {
+		if v.Index(i).Interface() == e {
+			return true
+		}
+	}
+	return false
+}
+
 // SliceAttach :
 func SliceAttach(s1, s2 interface{}, pos int) interface{} {
 	v1, v2 := ref.ValueOf(s1), ref.ValueOf(s2)
