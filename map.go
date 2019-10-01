@@ -3,6 +3,7 @@ package util
 import (
 	ref "reflect"
 	"regexp"
+	"sort"
 )
 
 // MapPrint : Key Sorted Print
@@ -36,11 +37,21 @@ func MapKeys(m interface{}) interface{} {
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := ref.TypeOf(keys[0].Interface())
-		rst := ref.MakeSlice(ref.SliceOf(kType), L, L)
+		rstValue := ref.MakeSlice(ref.SliceOf(kType), L, L)
 		for i, k := range keys {
-			rst.Index(i).Set(ref.ValueOf(k.Interface()))
+			rstValue.Index(i).Set(ref.ValueOf(k.Interface()))
 		}
-		return rst.Interface()
+		// sort keys if keys are int or float64 or string
+		rst := rstValue.Interface()
+		switch keys[0].Interface().(type) {
+		case int:
+			sort.Ints(rst.([]int))
+		case float64:
+			sort.Float64s(rst.([]float64))
+		case string:
+			sort.Strings(rst.([]string))
+		}
+		return rst
 	}
 	return nil
 }

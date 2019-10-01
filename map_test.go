@@ -5,9 +5,9 @@ import (
 )
 
 func TestMap(t *testing.T) {
-	m := map[string]string{"a": "b", "c": "d", "e": "f"}
+	m := map[string]string{"zabc": "b", "f": "d", "e": "f"}
 	fPln(MapKeys(m).([]string))
-	m1 := map[int]string{1: "B", 2: "D", 3: "F"}
+	m1 := map[int]string{11: "B", 2: "D", 3: "F", -1: "-1"}
 	fPln(MapKeys(m1).([]int))
 
 	fPln(" ---------------------------------------------- ")
