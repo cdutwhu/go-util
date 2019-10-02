@@ -5,6 +5,27 @@ import (
 	"testing"
 )
 
+func TestSliceSearch(t *testing.T) {
+	arr := []string{"aa", "b", "c", "A", "c", "aa", "D", "b", "A"}
+	ok, idx := SliceSearch(arr, func(i int, e interface{}) bool {
+		return e == "AA"
+	})
+	if ok {
+		fmt.Println(idx, arr[idx])
+	} else {
+		fmt.Println("Not Found 1")
+	}
+
+	ok, indices, fd := SliceSearchAll(arr, func(i int, e interface{}) bool {
+		return e == "A" || i == 2
+	})
+	if ok {
+		fmt.Println(indices, fd)
+	} else {
+		fmt.Println("Not Found 2")
+	}
+}
+
 func TestSliceCover(t *testing.T) {
 
 	fmt.Println(XIn("11", []string{"a", "b", "1"}))

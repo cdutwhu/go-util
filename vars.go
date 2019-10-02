@@ -10,7 +10,6 @@ import (
 var (
 	sCtn = strings.Contains
 	sSpl = strings.Split
-
 	fPln = fmt.Println
 	fPf  = fmt.Printf
 	fEf  = fmt.Errorf
